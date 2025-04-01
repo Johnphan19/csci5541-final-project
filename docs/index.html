@@ -139,7 +139,7 @@
   <b>What did you try to do? What problem did you try to solve?</b>
 </p>
 <p>
-  We aimed to investigate methods for making a Large Language Model "unlearn" a specific capability. In this project, the target capability was solving mathematical problems accurately. The core problem is how to remove or degrade specific knowledge or skills from a pre-trained LLM without needing to retrain it entirely, which is computationally prohibitive. Our objective was to achieve this degradation by fine-tuning the model on a dataset where the mathematical reasoning or answers were intentionally incorrect or scrambled.
+  We aimed to investigate the interconnectedness of different abilities within a Large Language Model (LLM). Specifically, we tried to understand if degrading a model's performance in one specialized domain (mathematical problem-solving) would have observable effects on its capabilities in another, seemingly unrelated domain (general language understanding and generation). The core problem addressed is the lack of clear understanding about how skills learned from diverse pre-training data interact or share resources within the model's architecture. Rather than aiming for 'unlearning' as typically done for safety, our goal was to use the weakening of the math skill as a controlled experiment. We wanted to observe whether reducing proficiency in math would alter the model's handling of general language tasks, thus shedding light on how these different capabilities might be linked internally.
 </p>
 
 <p>
