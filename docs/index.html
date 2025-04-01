@@ -123,13 +123,13 @@
 <hr>
 
 <h2 id="teaser">Training Dynamics</h2>
-  <p>The core idea was to fine-tune the model on corrupted math data and observe its performance on correct math problems. The training loss decreased as the model learned the corrupted format, while the evaluation loss on the original validation set increased, indicating the desired degradation of the original math-solving skill. The plots below show the training and evaluation loss curves from our WandB logs during one epoch of fine-tuning.</p>
+  <p>The core idea was to fine-tune the model on corrupted math data and observe its performance on correct math problems. The training loss decreased as the model learned the corrupted format, while the evaluation loss on the original validation set increased, indicating the desired degradation of the original math-solving skill. The plots below show the training and evaluation loss curves from our WandB logs during three epochs of fine-tuning.</p>
   <div style="text-align: center; margin-bottom: 20px;">
       <img style="width: 45%; margin: 10px;" alt="Train Loss Curve" src="./files/train_loss.png">
       <img style="width: 45%; margin: 10px;" alt="Evaluation Loss Curve" src="./files/eval_loss.png">
   </div>
   <div style="text-align: center; margin-bottom: 20px;">
-    <caption>Figure 1. Training loss (left) decreasing over steps, and Evaluation loss (right) increasing over steps during fine-tuning (1 epoch).</caption>
+    <caption>Figure 1. Training loss (left) decreasing over steps, and Evaluation loss (right) increasing over steps during fine-tuning (3 epochs).</caption>
   </div>
 
 <hr>
