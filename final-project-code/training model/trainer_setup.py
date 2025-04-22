@@ -83,7 +83,8 @@ class TrainerSetup:
             # bf16=(config.DEVICE.type in ['cuda', 'xpu'] and config.DTYPE_TO_LOAD == torch.bfloat16),
             # fp16=(config.DEVICE.type == 'cuda' and config.DTYPE_TO_LOAD != torch.bfloat16), # Use fp16 if cuda and not bf16
             report_to="wandb" if wandb.run is not None else "none", # Report only if wandb initialized
-            gradient_checkpointing=True, # Saves memory
+            # gradient_checkpointing=True, # Saves memory
+            gradient_checkpointing=False, # Saves memory
             push_to_hub=False,
             # Required for some models when gradient checkpointing is enabled
             # find_unused_parameters=False # Set to True or False based on model/warnings

@@ -34,7 +34,28 @@ MAX_INPUT_LENGTH = 4096 # Max sequence length for tokenizer
 # --- Evaluation & Generation ---
 NUM_VALIDATION_EXAMPLES_TO_GENERATE = 10
 MAX_NEW_TOKENS_MATH = 512
-MAX_NEW_TOKENS_NON_MATH = 100
+# MAX_NEW_TOKENS_MATH = 32_768
+# MAX_NEW_TOKENS_NON_MATH = 1000
+MAX_NEW_TOKENS_NON_MATH = 32_768 # Keep large for testing flexibility
+
+# --- Prompt Templates & Sequences ---
+# Template for math problems during training data construction (prefix)
+# Escape literal braces for .format()
+TRAINING_MATH_PROMPT_START = "Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem} <think>\n"
+
+# Template for math problems during inference
+# Escape literal braces for .format()
+MATH_PROMPT_INFERENCE_TEMPLATE = "Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem} <think>\n"
+
+# Template for general prompts during inference
+GENERAL_PROMPT_INFERENCE_TEMPLATE = "{prompt} <think>\n"
+
+# Sequence marking the end of the prompt/start of generation (used for loss masking)
+THINK_START_SEQUENCE = "<think>\n"
+# Sequence marking the end of the thought process (used for loss masking ID generation)
+THINK_END_SEQUENCE = "</think>" # Used to generate IDs for masking
+# Sequence used *in the text* during preprocessing to mark the end of thoughts
+TRAINING_THINK_END_SEQUENCE = "\n</think>" # Used in _preprocess_function
 
 # --- WandB Configuration ---
 WANDB_PROJECT = "NLP_Final_Project_FineTuning"
@@ -50,6 +71,9 @@ if DEVICE.type == 'cuda' and torch.cuda.is_bf16_supported():
     DTYPE_TO_LOAD = torch.bfloat16
 elif DEVICE.type == 'xpu' and hasattr(torch.xpu, 'is_bf16_supported') and torch.xpu.is_bf16_supported():
     DTYPE_TO_LOAD = torch.bfloat16
+
+# Override to float32
+# DTYPE_TO_LOAD = torch.float32
 
 # --- Non-Math Prompts ---
 NON_MATH_PROMPTS_BASE_STYLE = [

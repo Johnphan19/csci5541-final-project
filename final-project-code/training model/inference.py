@@ -28,8 +28,9 @@ class Generator:
 
 
     def generate_math_response(self, problem: str, max_new_tokens: int = config.MAX_NEW_TOKENS_MATH) -> str:
-        """Generates a solution for a given math problem prompt."""
-        prompt = f"Problem:\n{problem}\n\nSolution:\n"
+        """Generates a solution for a given math problem prompt using the config template."""
+        # Format the prompt using the inference template
+        prompt = config.MATH_PROMPT_INFERENCE_TEMPLATE.format(problem=problem)
         response_text = "[Error during generation]"
         try:
             inputs = self.tokenizer(
@@ -45,8 +46,10 @@ class Generator:
                     max_new_tokens=max_new_tokens,
                     pad_token_id=self.tokenizer.eos_token_id,
                     eos_token_id=self.tokenizer.eos_token_id,
-                    do_sample=False, # Use greedy decoding for math problems
-                    num_beams=1,
+                    do_sample=True,
+                    top_k=40,
+                    top_p=0.9,
+                    temperature=0.6,
                 )
 
             # Decode only the newly generated tokens
@@ -63,21 +66,23 @@ class Generator:
 
 
     def generate_general_response(self, prompt: str, max_new_tokens: int = config.MAX_NEW_TOKENS_NON_MATH) -> str:
-        """Generates a response for a general prompt using sampling."""
+        """Generates a response for a general prompt using sampling and the config template."""
+        # Format the prompt using the general inference template
+        formatted_prompt = config.GENERAL_PROMPT_INFERENCE_TEMPLATE.format(prompt=prompt)
         response_text = "[Error during generation]"
         try:
             # Calculate max length for input tokens, leaving space for generation
             input_max_len = max(0, self.model_max_length - max_new_tokens - 20) # Buffer
 
             inputs = self.tokenizer(
-                prompt,
+                formatted_prompt, # Use the formatted prompt
                 return_tensors="pt",
                 truncation=True,
                 max_length=input_max_len
             ).to(self.device)
 
             if inputs['input_ids'].shape[1] == 0:
-                 print(f"  Warning: Input prompt resulted in zero tokens after tokenization/truncation. Prompt: '{prompt[:100]}...'")
+                 print(f"  Warning: Input prompt resulted in zero tokens after tokenization/truncation. Prompt: '{formatted_prompt[:100]}...'")
                  return "[Input prompt too long or empty after processing]"
 
             with torch.no_grad():
@@ -154,8 +159,9 @@ class Generator:
         if generator_finetuned:
             print("\n--- Generating Non-Math with FINE-TUNED Model ---")
             for i, prompt in enumerate(prompts):
-                print(f"\nPrompt {i+1}: {prompt}")
-                response = generator_finetuned.generate_general_response(prompt)
+                # The <think>\n is now handled by generate_general_response via the template
+                print(f"\nPrompt {i+1}: {prompt}") # Print the original prompt
+                response = generator_finetuned.generate_general_response(prompt) # Pass the original prompt
                 print(f"Fine-Tuned Model Response:\n{response}")
                 print("-" * 20)
         else:
@@ -165,8 +171,9 @@ class Generator:
         if generator_base:
             print("\n--- Generating Non-Math with BASE Model ---")
             for i, prompt in enumerate(prompts):
-                print(f"\nPrompt {i+1}: {prompt}")
-                response = generator_base.generate_general_response(prompt)
+                # The <think>\n is now handled by generate_general_response via the template
+                print(f"\nPrompt {i+1}: {prompt}") # Print the original prompt
+                response = generator_base.generate_general_response(prompt) # Pass the original prompt
                 print(f"Base Model Response:\n{response}")
                 print("-" * 20)
         else:
