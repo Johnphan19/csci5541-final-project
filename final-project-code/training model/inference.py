@@ -12,13 +12,18 @@ class Generator:
 
         Args:
             model: The loaded model (base or fine-tuned) for generation.
-            tokenizer: The corresponding tokenizer.
+            tokenizer: The corresponding tokenizer (must have chat_template).
             device: The torch device the model is on.
         """
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
         self.model.eval() # Ensure model is in eval mode
+
+        if not self.tokenizer.chat_template:
+             print("Warning: Tokenizer does not have a chat_template defined. Inference formatting might fail or produce unexpected results.")
+             # raise ValueError("Tokenizer must have a chat_template for Generator.")
+
         try:
             self.model_max_length = self.model.config.max_position_embeddings
         except AttributeError:
@@ -28,31 +33,45 @@ class Generator:
 
 
     def generate_math_response(self, problem: str, max_new_tokens: int = config.MAX_NEW_TOKENS_MATH) -> str:
-        """Generates a solution for a given math problem prompt using the config template."""
-        # Format the prompt using the inference template
-        prompt = config.MATH_PROMPT_INFERENCE_TEMPLATE.format(problem=problem)
+        """Generates a solution for a given math problem prompt using the tokenizer's chat template."""
         response_text = "[Error during generation]"
         try:
+            # 1. Construct messages for the chat template
+            messages = [
+                {"role": "user", "content": f"Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem}"}
+                # Assistant role is added by add_generation_prompt=True
+            ]
+
+            # 2. Apply chat template to format the prompt string
+            # add_generation_prompt=True appends the tokens to prompt for the assistant's turn
+            prompt_string = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+
+            # 3. Tokenize the formatted prompt string
             inputs = self.tokenizer(
-                prompt,
+                prompt_string,
                 return_tensors="pt",
                 truncation=True,
                 max_length=self.model_max_length - max_new_tokens - 10 # Leave buffer
             ).to(self.device)
 
+            # 4. Generate response
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
                     max_new_tokens=max_new_tokens,
                     pad_token_id=self.tokenizer.eos_token_id,
-                    eos_token_id=self.tokenizer.eos_token_id,
+                    eos_token_id=self.tokenizer.eos_token_id, # Or specific stop tokens if needed
                     do_sample=True,
                     top_k=40,
                     top_p=0.9,
                     temperature=0.6,
                 )
 
-            # Decode only the newly generated tokens
+            # 5. Decode only the newly generated tokens
             generated_ids = outputs[0, inputs['input_ids'].shape[1]:]
             response_text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
 
@@ -66,16 +85,25 @@ class Generator:
 
 
     def generate_general_response(self, prompt: str, max_new_tokens: int = config.MAX_NEW_TOKENS_NON_MATH) -> str:
-        """Generates a response for a general prompt using sampling and the config template."""
-        # Format the prompt using the general inference template
-        formatted_prompt = config.GENERAL_PROMPT_INFERENCE_TEMPLATE.format(prompt=prompt)
+        """Generates a response for a general prompt using the tokenizer's chat template."""
         response_text = "[Error during generation]"
         try:
-            # Calculate max length for input tokens, leaving space for generation
-            input_max_len = max(0, self.model_max_length - max_new_tokens - 20) # Buffer
+            # 1. Construct messages
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
 
+            # 2. Apply chat template
+            formatted_prompt = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+
+            # 3. Tokenize
+            input_max_len = max(0, self.model_max_length - max_new_tokens - 20) # Buffer
             inputs = self.tokenizer(
-                formatted_prompt, # Use the formatted prompt
+                formatted_prompt,
                 return_tensors="pt",
                 truncation=True,
                 max_length=input_max_len
@@ -85,19 +113,20 @@ class Generator:
                  print(f"  Warning: Input prompt resulted in zero tokens after tokenization/truncation. Prompt: '{formatted_prompt[:100]}...'")
                  return "[Input prompt too long or empty after processing]"
 
+            # 4. Generate
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
                     max_new_tokens=max_new_tokens,
                     pad_token_id=self.tokenizer.eos_token_id,
                     eos_token_id=self.tokenizer.eos_token_id,
-                    # Sampling parameters for general text
                     do_sample=True,
                     top_k=40,
                     top_p=0.9,
                     temperature=0.6,
                 )
 
+            # 5. Decode
             generated_ids = outputs[0, inputs['input_ids'].shape[1]:]
             response_text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
 

@@ -23,11 +23,13 @@ class PromptMaskingDataCollator(DataCollatorForLanguageModeling):
     Data collator that masks the prompt and thought portions (up to and including
     the *last token* of the first occurrence of THINK_END_SEQUENCE) for loss calculation.
     Loss is only calculated on the tokens that come *after* this sequence.
+    Assumes the input has been formatted using a chat template, and the sequence
+    to mask up to (THINK_END_SEQUENCE) is present within the assistant's part.
     """
     def __init__(self, tokenizer: AutoTokenizer, think_end_sequence_ids: List[int], **kwargs):
         super().__init__(tokenizer=tokenizer, **kwargs)
         self.think_end_sequence_ids = think_end_sequence_ids
-        print(f"PromptMaskingDataCollator: Initialized. Masking up to the first occurrence of sequence IDs: {self.think_end_sequence_ids}")
+        print(f"PromptMaskingDataCollator: Initialized. Masking up to the first occurrence of sequence IDs: {self.think_end_sequence_ids} (corresponding to '{config.THINK_END_SEQUENCE}')")
         if not self.think_end_sequence_ids:
              print("Warning: Think end sequence IDs are empty or invalid. Prompt masking will likely fail.")
 
@@ -51,18 +53,14 @@ class PromptMaskingDataCollator(DataCollatorForLanguageModeling):
                 if start_idx != -1:
                     # Mask everything up to and including the *last* token of the sequence
                     mask_until_idx = start_idx + len(self.think_end_sequence_ids)
-                    # Mask until the end of the sequence, but not including the last token of the sequence
-                    # mask_until_idx = start_idx
                     # print(f"Debug: Found sequence at index {start_idx} in example {i}. Masking until index {mask_until_idx}.") # Optional debug print
                 else:
-                    # Sequence not found - this indicates an issue
-                    print(f"Warning: Think end sequence {self.think_end_sequence_ids} not found in example {i}. Loss calculation might be incorrect. Example start: {self.tokenizer.decode(input_ids_list[:50])}")
-                    # Fallback: Mask only the BOS token if present, otherwise mask nothing.
-                    if input_ids_list and input_ids_list[0] == self.tokenizer.bos_token_id:
-                        labels[i, 0] = -100
-                    # Consider masking the entire label sequence if the end tag is crucial
-                    # labels[i, :] = -100
-                    continue # Skip masking for this example if sequence not found
+                    # Sequence not found - this indicates an issue with data or sequence
+                    print(f"Warning: Think end sequence {self.think_end_sequence_ids} ('{config.THINK_END_SEQUENCE}') not found in example {i}. Loss calculation might be incorrect. Example start: {self.tokenizer.decode(input_ids_list[:50])}")
+                    # Fallback: Mask only the padding tokens? Or mask nothing? Masking nothing might be safer.
+                    # Let's mask nothing specific here, relying on padding mask (-100)
+                    # labels[i, :] = -100 # Mask entire sequence if end tag is crucial and missing
+                    continue # Skip specific masking for this example if sequence not found
             else:
                  # Should not happen if initialized correctly, but handle defensively
                  print(f"Warning: think_end_sequence_ids is empty for example {i}. Skipping masking.")
@@ -82,27 +80,29 @@ class PromptMaskingDataCollator(DataCollatorForLanguageModeling):
         return batch
 
 class DataHandler:
-    """Handles dataset loading, preprocessing, and collation."""
+    """Handles dataset loading, preprocessing using chat templates, and collation."""
 
     def __init__(self, tokenizer: AutoTokenizer, max_length: int = config.MAX_INPUT_LENGTH):
         """
         Initializes the DataHandler.
 
         Args:
-            tokenizer: The tokenizer to use for preprocessing.
+            tokenizer: The tokenizer to use for preprocessing (must have chat_template).
             max_length: The maximum sequence length for tokenization.
         """
         self.tokenizer = tokenizer
         self.max_length = max_length
 
+        if not self.tokenizer.chat_template:
+            print("Warning: Tokenizer does not have a chat_template defined. Preprocessing might fail or produce unexpected results.")
+            # raise ValueError("Tokenizer must have a chat_template for this DataHandler.")
+
         # Get token IDs for the sequence indicating the end of the prompt/thoughts
         # This uses THINK_END_SEQUENCE for masking purposes.
-        # Ensure add_special_tokens=False is appropriate here. If the sequence itself
-        # relies on special tokens being added, adjust accordingly.
         self.think_end_sequence_ids = self.tokenizer.encode(config.THINK_END_SEQUENCE, add_special_tokens=False)
 
-        print(f"DataHandler initialized. Masking End Sequence: '{config.THINK_END_SEQUENCE}', Encoded IDs for Masking: {self.think_end_sequence_ids}") # Clarified purpose
-        print(f"DataHandler using Preprocessing End Sequence in text: '{config.TRAINING_THINK_END_SEQUENCE}'") # Added print for the text sequence
+        print(f"DataHandler initialized. Using tokenizer chat template for formatting.")
+        print(f"Masking End Sequence: '{config.THINK_END_SEQUENCE}', Encoded IDs for Masking: {self.think_end_sequence_ids}")
         if not self.think_end_sequence_ids:
             print("Warning: Could not encode THINK_END_SEQUENCE for masking. Masking will not work.")
 
@@ -139,28 +139,52 @@ class DataHandler:
 
         return dataset
 
-
     def _preprocess_function(self, examples):
         """
-        Internal preprocessing function to format and tokenize examples.
-        Creates the full string: PROMPT + <think>\n + ... + \n</think> + ANSWER + EOS
-        Assumes 'output_answer' contains only the final answer string.
-        Example 'output_answer': "The final answer is \\boxed{42}"
+        Internal preprocessing function to format and tokenize examples using the chat template.
+        Assumes 'input' is the problem and 'output_answer' contains the full assistant response
+        including the <think>...</think> block and the final answer.
         """
-        texts = [
-            config.TRAINING_MATH_PROMPT_START.format(problem=prob) # Includes <think>\n
-            + config.TRAINING_THINK_END_SEQUENCE # Use the sequence for text construction
-            # + " " # Add a space before the answer for potential tokenization benefits
-            + "\n" # Newline before the answer
-            + ans
-            + self.tokenizer.eos_token
-            for prob, ans in zip(examples['input'], examples['output_answer'])
+        batch_messages = []
+        # Assuming 'input' and 'output_answer' columns exist in the examples
+        required_cols = ['input', 'output_answer']
+        if not all(col in examples for col in required_cols):
+             print(f"Error: Preprocessing function missing required columns: {required_cols}. Available: {list(examples.keys())}")
+             # Return empty dict or raise error? Let's return something that map can handle.
+             # Need to ensure the output structure matches tokenizer output for consistency.
+             # Returning empty lists might cause issues later. Best to ensure data is correct upstream.
+             raise ValueError(f"Missing required columns {required_cols} in dataset split.")
+
+        for problem, assistant_response in zip(examples['input'], examples['output_answer']):
+            # Construct the conversation structure for the chat template
+            # Ensure the assistant_response from the dataset includes the <think>...</think> block
+            # and the final answer for the masking logic to work.
+            messages = [
+                {"role": "user", "content": f"Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem}"},
+                {"role": "assistant", "content": assistant_response } # EOS is typically added by tokenizer/template or later
+            ]
+            batch_messages.append(messages)
+
+        # Format the messages using the chat template (returns strings)
+        # We add EOS manually before tokenizing if the template doesn't handle it for training examples.
+        # Check tokenizer docs/behavior for specific model. Assuming manual EOS addition is needed here.
+        formatted_texts = [
+            self.tokenizer.apply_chat_template(msgs, tokenize=False, add_generation_prompt=False)
+            for msgs in batch_messages
         ]
-        model_inputs = self.tokenizer(texts, max_length=self.max_length, truncation=True)
+        formatted_texts_with_eos = [text + self.tokenizer.eos_token for text in formatted_texts]
+
+        # Tokenize the formatted strings
+        model_inputs = self.tokenizer(
+            formatted_texts_with_eos,
+            max_length=self.max_length,
+            truncation=True,
+            padding=False, # Collator will handle padding
+        )
         return model_inputs
 
     def tokenize_dataset(self, dataset: DatasetDict) -> DatasetDict:
-        """Applies the preprocessing function to the dataset."""
+        """Applies the preprocessing function (using chat template) to the dataset."""
         print("Tokenizing dataset...")
         # Keep track of original columns to remove them *after* mapping
         original_columns_per_split = {split: list(dataset[split].features.keys()) for split in dataset.keys()}
@@ -199,7 +223,6 @@ class DataHandler:
             else:
                  print(f"Warning: Split '{split}' not found in tokenized_dataset after mapping.")
 
-
         print("Original columns removed after tokenization.")
         if "train" in final_tokenized_dataset and len(final_tokenized_dataset["train"]) > 0:
              print(f"Final tokenized training dataset example (first item keys): {list(final_tokenized_dataset['train'].features.keys())}")
@@ -210,7 +233,7 @@ class DataHandler:
 
     def get_data_collator(self) -> DataCollatorForLanguageModeling:
         """Returns the custom data collator for language modeling with prompt/thought masking."""
-        print(f"Initializing custom PromptMaskingDataCollator with masking sequence IDs: {self.think_end_sequence_ids} (from '{config.THINK_END_SEQUENCE}')") # Clarified which sequence is used for IDs
+        print(f"Initializing custom PromptMaskingDataCollator with masking sequence IDs: {self.think_end_sequence_ids} (from '{config.THINK_END_SEQUENCE}')")
         if not self.think_end_sequence_ids:
             print("Error: Cannot initialize PromptMaskingDataCollator because think_end_sequence_ids are missing.")
             # Fallback to default collator to avoid crashing, but training will be incorrect.

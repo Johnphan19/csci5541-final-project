@@ -41,26 +41,26 @@ MAX_NEW_TOKENS_NON_MATH = 32_768 # Keep large for testing flexibility
 # --- Prompt Templates & Sequences ---
 # Template for math problems during training data construction (prefix)
 # Escape literal braces for .format()
-TRAINING_MATH_PROMPT_START = "Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem} <think>\n"
+# TRAINING_MATH_PROMPT_START = "Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem} <think>\n" # Replaced by chat template
 
 # Template for math problems during inference
 # Escape literal braces for .format()
-MATH_PROMPT_INFERENCE_TEMPLATE = "Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem} <think>\n"
+# MATH_PROMPT_INFERENCE_TEMPLATE = "Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem} <think>\n" # Replaced by chat template
 
 # Template for general prompts during inference
-GENERAL_PROMPT_INFERENCE_TEMPLATE = "{prompt} <think>\n"
+# GENERAL_PROMPT_INFERENCE_TEMPLATE = "{prompt} <think>\n" # Replaced by chat template
 
 # Sequence marking the end of the prompt/start of generation (used for loss masking)
-THINK_START_SEQUENCE = "<think>\n"
+# THINK_START_SEQUENCE = "<think>\n" # Included in assistant content
 # Sequence marking the end of the thought process (used for loss masking ID generation)
 THINK_END_SEQUENCE = "</think>" # Used to generate IDs for masking
 # Sequence used *in the text* during preprocessing to mark the end of thoughts
-TRAINING_THINK_END_SEQUENCE = "\n</think>" # Used in _preprocess_function
+# TRAINING_THINK_END_SEQUENCE = "\n</think>" # Assumed to be part of assistant content in data
 
 # --- WandB Configuration ---
 WANDB_PROJECT = "NLP_Final_Project_FineTuning"
 # Descriptive run name
-WANDB_RUN_NAME = f"{MODEL_NAME.split('/')[-1]}-{os.path.basename(DATASET_JSON_PATH).split('.')[0]}-lr{LEARNING_RATE}-ep{EPOCHS}"
+WANDB_RUN_NAME = f"{MODEL_NAME.split('/')[-1]}-{os.path.basename(DATASET_JSON_PATH).split('.')[0]}-lr{LEARNING_RATE}-ep{EPOCHS}-chat_template" # Added suffix
 
 # --- Environment Configuration ---
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "xpu" if hasattr(torch, 'xpu') and torch.xpu.is_available() else "cpu")
