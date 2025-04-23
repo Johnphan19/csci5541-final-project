@@ -44,8 +44,10 @@ class ModelHandler:
         # For training with Trainer/Accelerate, device_map is often handled automatically or set to "auto".
         # For inference, explicitly mapping to the target device is common if not using "auto".
         device_map_strategy = None if for_training else (self.device if self.device.type != 'cpu' else None)
+        # device_map_strategy = self.device
         # device_map_strategy = "auto" # Alternative if accelerate is installed and preferred
-
+        print(f"Using device_map: {device_map_strategy}")
+        print(f"Loading model with dtype: {self.dtype}")
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             trust_remote_code=trust_remote_code,

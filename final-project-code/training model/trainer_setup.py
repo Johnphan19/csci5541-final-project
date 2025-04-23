@@ -70,7 +70,7 @@ class TrainerSetup:
             gradient_accumulation_steps=config.GRADIENT_ACCUMULATION_STEPS,
             num_train_epochs=config.EPOCHS,
             weight_decay=config.WEIGHT_DECAY,
-            # evaluation_strategy="steps",
+            evaluation_strategy="steps", # Enable evaluation during training
             eval_steps=config.EVALUATION_STEPS,
             save_strategy="steps",
             save_steps=config.SAVE_STEPS,

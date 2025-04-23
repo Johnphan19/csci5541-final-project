@@ -22,10 +22,16 @@ LOGGING_DIR = os.path.join(OUTPUT_DIR, 'logs')
 
 # --- Training Hyperparameters ---
 LEARNING_RATE = 2e-5
-EPOCHS = 3
+# LEARNING_RATE = 1e-3
+# LEARNING_RATE = 1e-11
+EPOCHS = 1
+# TRAIN_BATCH_SIZE = 1  # Adjust based on GPU memory
 TRAIN_BATCH_SIZE = 1  # Adjust based on GPU memory
 GRADIENT_ACCUMULATION_STEPS = 8  # Effective batch size = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
+# GRADIENT_ACCUMULATION_STEPS = 2  # Effective batch size = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
+# EVAL_BATCH_SIZE = 1
 EVAL_BATCH_SIZE = 1
+# WEIGHT_DECAY = 0.01
 WEIGHT_DECAY = 0.01
 EVALUATION_STEPS = 10 # Evaluate every N steps
 SAVE_STEPS = 3000 # Save checkpoint every N steps
@@ -33,10 +39,13 @@ MAX_INPUT_LENGTH = 4096 # Max sequence length for tokenizer
 
 # --- Evaluation & Generation ---
 NUM_VALIDATION_EXAMPLES_TO_GENERATE = 10
-MAX_NEW_TOKENS_MATH = 512
+MAX_NEW_TOKENS_MATH = 124
+# MAX_NEW_TOKENS_MATH = 512
+# MAX_NEW_TOKENS_MATH = 1024
 # MAX_NEW_TOKENS_MATH = 32_768
+MAX_NEW_TOKENS_NON_MATH = 124
 # MAX_NEW_TOKENS_NON_MATH = 1000
-MAX_NEW_TOKENS_NON_MATH = 32_768 # Keep large for testing flexibility
+# MAX_NEW_TOKENS_NON_MATH = 32_768 # Keep large for testing flexibility
 
 # --- Prompt Templates & Sequences ---
 # Template for math problems during training data construction (prefix)
@@ -52,8 +61,10 @@ MAX_NEW_TOKENS_NON_MATH = 32_768 # Keep large for testing flexibility
 
 # Sequence marking the end of the prompt/start of generation (used for loss masking)
 # THINK_START_SEQUENCE = "<think>\n" # Included in assistant content
+
 # Sequence marking the end of the thought process (used for loss masking ID generation)
-THINK_END_SEQUENCE = "</think>" # Used to generate IDs for masking
+# THINK_END_SEQUENCE = "</think>" # No longer used for masking, comment out or remove if not used elsewhere
+
 # Sequence used *in the text* during preprocessing to mark the end of thoughts
 # TRAINING_THINK_END_SEQUENCE = "\n</think>" # Assumed to be part of assistant content in data
 

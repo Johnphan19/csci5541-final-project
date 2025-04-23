@@ -6,7 +6,7 @@ import config # Import the configuration
 class Generator:
     """Handles text generation using a loaded model and tokenizer."""
 
-    def __init__(self, model: AutoModelForCausalLM, tokenizer: AutoTokenizer, device: torch.device):
+    def __init__(self, model: AutoModelForCausalLM, tokenizer: AutoTokenizer, device: torch.device, inference_style: str = 'think'):
         """
         Initializes the Generator.
 
@@ -14,43 +14,70 @@ class Generator:
             model: The loaded model (base or fine-tuned) for generation.
             tokenizer: The corresponding tokenizer (must have chat_template).
             device: The torch device the model is on.
+            inference_style: Determines the prompt format for generation.
+                             'think': Uses the format ending with '<｜Assistant｜><think>\n'.
+                             'no_think': Uses the format ending with '<｜Assistant｜><think>\n\n</think>\n'.
         """
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
+        self.inference_style = inference_style
         self.model.eval() # Ensure model is in eval mode
 
         if not self.tokenizer.chat_template:
              print("Warning: Tokenizer does not have a chat_template defined. Inference formatting might fail or produce unexpected results.")
-             # raise ValueError("Tokenizer must have a chat_template for Generator.")
+
+        # Define the marker strings based on style for manual appending if needed
+        self.marker_str_no_think = "<｜Assistant｜>"
+        # Assuming the template with add_generation_prompt=True produces the 'think' version
+        # If not, you might need: self.marker_str_think = "<|Assistant|><think>\n"
 
         try:
             self.model_max_length = self.model.config.max_position_embeddings
         except AttributeError:
             print(f"Warning: Could not get max_position_embeddings for model {model.config._name_or_path}. Using default max_length={config.MAX_INPUT_LENGTH}.")
             self.model_max_length = config.MAX_INPUT_LENGTH # Fallback
-        print(f"Generator initialized. Model max length: {self.model_max_length}")
+        print(f"Generator initialized with inference_style='{self.inference_style}'. Model max length: {self.model_max_length}")
 
 
-    def generate_math_response(self, problem: str, max_new_tokens: int = config.MAX_NEW_TOKENS_MATH) -> str:
-        """Generates a solution for a given math problem prompt using the tokenizer's chat template."""
-        response_text = "[Error during generation]"
-        try:
-            # 1. Construct messages for the chat template
-            messages = [
-                {"role": "user", "content": f"Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem}"}
-                # Assistant role is added by add_generation_prompt=True
-            ]
-
-            # 2. Apply chat template to format the prompt string
-            # add_generation_prompt=True appends the tokens to prompt for the assistant's turn
-            prompt_string = self.tokenizer.apply_chat_template(
+    def _format_prompt(self, messages: list) -> str:
+        """Applies chat template based on the inference_style."""
+        if self.inference_style == 'think':
+            # Assume add_generation_prompt=True adds the desired marker (e.g., including <think>)
+            return self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+        elif self.inference_style == 'no_think':
+            # Apply template without generation prompt, then manually add the 'no_think' marker
+            prompt_base = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=False # Get only user part formatted
+            )
+            return prompt_base + self.marker_str_no_think
+        else:
+            print(f"Warning: Unknown inference_style '{self.inference_style}'. Defaulting to 'think' style formatting.")
+            return self.tokenizer.apply_chat_template(
                 messages,
                 tokenize=False,
                 add_generation_prompt=True
             )
 
-            # 3. Tokenize the formatted prompt string
+    def generate_math_response(self, problem: str, max_new_tokens: int = config.MAX_NEW_TOKENS_MATH) -> str:
+        """Generates a solution for a given math problem prompt using the configured inference style."""
+        response_text = "[Error during generation]"
+        try:
+            # 1. Construct messages
+            messages = [
+                {"role": "user", "content": f"Please reason step by step, and put your final answer within \\boxed{{}}.\n{problem}"}
+            ]
+
+            # 2. Apply chat template based on style
+            prompt_string = self._format_prompt(messages)
+
+            # 3. Tokenize
             inputs = self.tokenizer(
                 prompt_string,
                 return_tensors="pt",
@@ -79,13 +106,12 @@ class Generator:
             print(f"\nError during math generation: {e}")
             if "out of memory" in str(e).lower():
                 response_text = "[OOM Error during generation]"
-            # Handle other specific errors like device loss if necessary
 
         return response_text.strip()
 
 
     def generate_general_response(self, prompt: str, max_new_tokens: int = config.MAX_NEW_TOKENS_NON_MATH) -> str:
-        """Generates a response for a general prompt using the tokenizer's chat template."""
+        """Generates a response for a general prompt using the configured inference style."""
         response_text = "[Error during generation]"
         try:
             # 1. Construct messages
@@ -93,12 +119,8 @@ class Generator:
                 {"role": "user", "content": prompt}
             ]
 
-            # 2. Apply chat template
-            formatted_prompt = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
+            # 2. Apply chat template based on style
+            formatted_prompt = self._format_prompt(messages)
 
             # 3. Tokenize
             input_max_len = max(0, self.model_max_length - max_new_tokens - 20) # Buffer
@@ -135,7 +157,6 @@ class Generator:
             if "out of memory" in str(e).lower():
                  print("   OOM Error during generation. Try reducing max_new_tokens or using lower precision/quantization.")
                  return "[OOM Error during generation]"
-            # Handle other specific errors
 
         return response_text.strip()
 
@@ -165,14 +186,14 @@ class Generator:
             print(f"Actual Solution:\n{actual_solution}\n")
 
             if generator_finetuned:
-                print("Generating with Fine-Tuned Model...")
+                print(f"Generating with Fine-Tuned Model (Style: {generator_finetuned.inference_style})...")
                 ft_solution = generator_finetuned.generate_math_response(problem)
                 print(f"Fine-Tuned Model Solution:\n{ft_solution}\n")
             else:
                 print("Skipping Fine-Tuned Model (not provided).\n")
 
             if generator_base:
-                print("Generating with Base Model...")
+                print(f"Generating with Base Model (Style: {generator_base.inference_style})...")
                 base_solution = generator_base.generate_math_response(problem)
                 print(f"Base Model Solution:\n{base_solution}")
             else:
@@ -186,11 +207,10 @@ class Generator:
         print("\n\n--- Testing Non-Math Generation ---")
 
         if generator_finetuned:
-            print("\n--- Generating Non-Math with FINE-TUNED Model ---")
+            print(f"\n--- Generating Non-Math with FINE-TUNED Model (Style: {generator_finetuned.inference_style}) ---")
             for i, prompt in enumerate(prompts):
-                # The <think>\n is now handled by generate_general_response via the template
-                print(f"\nPrompt {i+1}: {prompt}") # Print the original prompt
-                response = generator_finetuned.generate_general_response(prompt) # Pass the original prompt
+                print(f"\nPrompt {i+1}: {prompt}")
+                response = generator_finetuned.generate_general_response(prompt)
                 print(f"Fine-Tuned Model Response:\n{response}")
                 print("-" * 20)
         else:
@@ -198,11 +218,10 @@ class Generator:
 
 
         if generator_base:
-            print("\n--- Generating Non-Math with BASE Model ---")
+            print(f"\n--- Generating Non-Math with BASE Model (Style: {generator_base.inference_style}) ---")
             for i, prompt in enumerate(prompts):
-                # The <think>\n is now handled by generate_general_response via the template
-                print(f"\nPrompt {i+1}: {prompt}") # Print the original prompt
-                response = generator_base.generate_general_response(prompt) # Pass the original prompt
+                print(f"\nPrompt {i+1}: {prompt}")
+                response = generator_base.generate_general_response(prompt)
                 print(f"Base Model Response:\n{response}")
                 print("-" * 20)
         else:
