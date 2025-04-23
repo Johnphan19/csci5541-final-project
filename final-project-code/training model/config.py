@@ -4,8 +4,9 @@ import torch
 # --- Dataset Configuration ---
 # Choose the dataset JSON path
 # DATASET_JSON_PATH = "../datasets/val_modified_lila_MATH_algebra_crowdsourced.json"
-DATASET_JSON_PATH = "../datasets/length_val_modified_lila_MATH_algebra_crowdsourced.json"
+# DATASET_JSON_PATH = "../datasets/length_val_modified_lila_MATH_algebra_crowdsourced.json"
 # DATASET_JSON_PATH = "../datasets/scrambled_lila_MATH_algebra_crowdsourced.json"
+DATASET_JSON_PATH = "../datasets/original_lila_MATH_algebra_crowdsourced.json" # Point to the original dataset
 
 BASE_DATASET_NAME = "allenai/lila"
 BASE_DATASET_CONFIG = "MATH_algebra_crowdsourced"
@@ -84,7 +85,7 @@ elif DEVICE.type == 'xpu' and hasattr(torch.xpu, 'is_bf16_supported') and torch.
     DTYPE_TO_LOAD = torch.bfloat16
 
 # Override to float32
-# DTYPE_TO_LOAD = torch.float32
+DTYPE_TO_LOAD = torch.float32
 
 # --- Non-Math Prompts ---
 NON_MATH_PROMPTS_BASE_STYLE = [
