@@ -284,30 +284,65 @@
   <hr>
   <h2 id="experimental-results">Experimental Results</h2>
   
-  <!-- A. Math Accuracy (Prompt Results) -->
+  <!-- A. Math Accuracy (Prompt-Level Accuracy) -->
   <h3>Math Performance (Prompt-Level Accuracy)</h3>
-  <div style="text-align: center;">
-    <img src="./files/main_prompt_hf_math_accuracy_combined_subjects_20250505_042444.png" style="width: 80%; margin: 10px;" alt="Overall Accuracy (Main Prompts)">
-    <img src="./files/main_prompt_hf_math_accuracy_all_subjects_combined_20250505_042444.png" style="width: 80%; margin: 10px;" alt="Subject Breakdown (Main Prompts)">
-    <img src="./files/new_prompt_hf_math_accuracy_combined_subjects_20250505_210815.png" style="width: 80%; margin: 10px;" alt="Overall Accuracy (New Prompts)">
-    <img src="./files/new_prompt_hf_math_accuracy_all_subjects_combined_20250505_210815.png" style="width: 80%; margin: 10px;" alt="Subject Breakdown (New Prompts)">
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+    <figure style="max-width: 45%;">
+      <img src="./files/main_prompt_hf_math_accuracy_combined_subjects_20250505_042444.png" style="width: 100%;" alt="Overall Accuracy (Main)">
+      <figcaption style="text-align: center;">Figure 1. Overall model accuracy across all subjects (main prompts).</figcaption>
+    </figure>
+    <figure style="max-width: 45%;">
+      <img src="./files/main_prompt_hf_math_accuracy_all_subjects_combined_20250505_042444.png" style="width: 100%;" alt="Subject Breakdown (Main)">
+      <figcaption style="text-align: center;">Figure 2. Accuracy by subject area (main prompts).</figcaption>
+    </figure>
+    <figure style="max-width: 45%;">
+      <img src="./files/new_prompt_hf_math_accuracy_combined_subjects_20250505_210815.png" style="width: 100%;" alt="Overall Accuracy (New)">
+      <figcaption style="text-align: center;">Figure 3. Overall model accuracy across all subjects (new prompts).</figcaption>
+    </figure>
+    <figure style="max-width: 45%;">
+      <img src="./files/new_prompt_hf_math_accuracy_all_subjects_combined_20250505_210815.png" style="width: 100%;" alt="Subject Breakdown (New)">
+      <figcaption style="text-align: center;">Figure 4. Accuracy by subject area (new prompts).</figcaption>
+    </figure>
   </div>
+  
+  <br>
   
   <!-- B. Train/Validation/Test Split Accuracy -->
   <h3>Model Accuracy by Dataset Split</h3>
-  <div style="text-align: center;">
-    <img src="./files/main_prompt_lila_math_accuracy_by_split_20250504_230401.png" style="width: 80%; margin: 10px;" alt="Split Accuracy (Main)">
-    <img src="./files/new_prompt_lila_math_accuracy_by_split_20250505_192457.png" style="width: 80%; margin: 10px;" alt="Split Accuracy (New)">
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+    <figure style="max-width: 45%;">
+      <img src="./files/main_prompt_lila_math_accuracy_by_split_20250504_230401.png" style="width: 100%;" alt="Split Accuracy (Main)">
+      <figcaption style="text-align: center;">Figure 5. Accuracy across train/val/test splits (main prompts).</figcaption>
+    </figure>
+    <figure style="max-width: 45%;">
+      <img src="./files/new_prompt_lila_math_accuracy_by_split_20250505_192457.png" style="width: 100%;" alt="Split Accuracy (New)">
+      <figcaption style="text-align: center;">Figure 6. Accuracy across train/val/test splits (new prompts).</figcaption>
+    </figure>
   </div>
   
-  <!-- C. LiveBench + Output Length -->
-  <h3>LiveBench Results and Output Analysis</h3>
+  <br>
+  
+  <!-- C. LiveBench Results + Output Length -->
+  <h3>LiveBench Performance and Output Token Length</h3>
   <div style="text-align: center;">
-    <img src="./files/combined_group_scores_live_bench.png" style="width: 90%; margin: 10px;" alt="LiveBench Group Performance">
-    <img src="./files/combined_task_scores_filtered_live_bench.png" style="width: 90%; margin: 10px;" alt="LiveBench Task Performance">
-    <img src="./files/token_length_average_by_category.png" style="width: 90%; margin: 10px;" alt="Average Token Length">
-    <img src="./files/token_length_median_by_category.png" style="width: 90%; margin: 10px;" alt="Median Token Length">
+    <figure style="width: 90%; margin: auto;">
+      <img src="./files/combined_group_scores_live_bench.png" style="width: 100%;" alt="LiveBench Group Scores">
+      <figcaption>Figure 7. Combined model performance by category on LiveBench.</figcaption>
+    </figure>
+    <figure style="width: 90%; margin: auto;">
+      <img src="./files/combined_task_scores_filtered_live_bench.png" style="width: 100%;" alt="LiveBench Task Scores">
+      <figcaption>Figure 8. Performance breakdown by individual task (LiveBench).</figcaption>
+    </figure>
+    <figure style="width: 90%; margin: auto;">
+      <img src="./files/token_length_average_by_category.png" style="width: 100%;" alt="Average Token Length">
+      <figcaption>Figure 9. Average output token length per response by task category.</figcaption>
+    </figure>
+    <figure style="width: 90%; margin: auto;">
+      <img src="./files/token_length_median_by_category.png" style="width: 100%;" alt="Median Token Length">
+      <figcaption>Figure 10. Median output token length per response by task category.</figcaption>
+    </figure>
   </div>
+  
   
 
 <hr>
