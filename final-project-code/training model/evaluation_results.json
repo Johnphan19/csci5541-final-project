@@ -1,0 +1,26 @@
+{
+  "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B": {
+    "validation_score": 0.0,
+    "test_score": 0.0
+  },
+  "finetuned_DeepSeek-R1-Distill-Qwen-1.5B_original_lila_MATH_algebra_crowdsourced_final_model": {
+    "validation_score": 0.0,
+    "test_score": 0.0
+  },
+  "finetuned_DeepSeek-R1-Distill-Qwen-1.5B_scrambled_lila_MATH_algebra_crowdsourced_final_model": {
+    "validation_score": 0.0,
+    "test_score": 0.0
+  },
+  "finetuned_DeepSeek-R1-Distill-Qwen-1.5B_val_modified_lila_MATH_algebra_crowdsourced_final_model": {
+    "validation_score": 0.0,
+    "test_score": 0.0
+  },
+  "finetuned_DeepSeek-R1-Distill-Qwen-1.5B_length_val_modified_lila_MATH_algebra_crowdsourced_final_model": {
+    "validation_score": 0.0,
+    "test_score": 0.0
+  },
+  "gradient_ascent_DeepSeek-R1-Distill-Qwen-1.5B_final_model": {
+    "validation_score": 0.0,
+    "test_score": 0.0
+  }
+}
