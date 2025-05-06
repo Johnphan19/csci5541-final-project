@@ -136,6 +136,38 @@
 
 <h2 id="introduction">Introduction / Background / Motivation</h2>
 <p>
+  <b>What did you try to do? What problem did you try to solve?</b>
+</p>
+<p>
+  We aimed to investigate the interconnectedness of different abilities within a Large Language Model (LLM). Specifically, we tried to understand if degrading a model's performance in one specialized domain (mathematical problem-solving) would have observable effects on its capabilities in another, seemingly unrelated domain (general language understanding and generation). The core problem addressed is the lack of clear understanding about how skills learned from diverse pre-training data interact or share resources within the model's architecture. Rather than aiming for 'unlearning' as typically done for safety, our goal was to use the weakening of the math skill as a controlled experiment. We wanted to observe whether reducing proficiency in math would alter the model's handling of general language tasks, thus shedding light on how these different capabilities might be linked internally.
+</p>
+
+<p>
+  <b>How is it done today, and what are the limits of current practice?</b>
+</p>
+<p>
+  Currently, removing information or capabilities from LLMs often involves costly full retraining or continued pre-training on curated data. Research into "machine unlearning" is active, exploring techniques like fine-tuning on negative examples, gradient manipulation (like gradient ascent on data to be forgotten), or parameter masking. However, these methods can be complex, may not completely remove the target information, or might negatively impact the model's general usefulness (catastrophic forgetting of desired skills). Simple fine-tuning on data demonstrating the "opposite" of the skill might not be targeted enough.
+</p>
+
+<p>
+  <b>Why study the cross-domain effects of skill degradation?</b>
+</p>
+<p>
+  Understanding how different skills learned from vast, diverse datasets are interconnected within an LLM is fundamental. When we manipulate one specific capability, like mathematical reasoning, observing the effects (or lack thereof) on unrelated areas, such as general language fluency, provides critical insights into the model's internal knowledge organization and the consequences of deviating from broad training data. If degrading math skills significantly impacts language, it suggests shared underlying representations or processing pathways learned during pre-training. Conversely, minimal impact might indicate greater modularity between these skills within the model's architecture. Successfully characterizing these interdependencies helps us:
+  <ul>
+      <li><b>Predict Side Effects:</b> Better anticipate how fine-tuning for one task might unintentionally affect performance on others.</li>
+      <li><b>Understand Model Structure:</b> Gain empirical evidence about how knowledge is organized and potentially shared across different domains within the network.</li>
+      <li><b>Inform Training Strategies:</b> Develop more robust models and fine-tuning approaches by understanding the sensitivity of various capabilities to changes in specific data distributions.</li>
+      <li><b>Probe Generalization:</b> Assess how well capabilities learned from diverse data generalize or interfere with each other when specific skills are manipulated.</li>
+  </ul>
+  Mapping these cross-skill impacts contributes to a deeper scientific understanding of LLM behavior and the importance of data diversity.
+</p>
+
+<hr>
+
+<h2 id="approach">Approach & Methodology</h2>
+
+<p>
   <b>What did you do exactly? How did you probe the model?</b>
 </p>
 <p>
