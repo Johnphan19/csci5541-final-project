@@ -122,6 +122,22 @@
 
 <hr>
 
+<h2 id="methodology">Methodology</h2>
+
+<p>To investigate cross-skill effects from targeted unlearning, we designed a focused experiment based on degrading math performance in an LLM and observing cross-domain impacts.</p>
+
+<ul>
+  <li><b>Model Used:</b> We fine-tuned the <code>deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B</code> model, a distilled version of DeepSeek-R1 with 1.5 billion parameters.</li>
+
+  <li><b>Dataset and Processing:</b> A modified version of the <code>MATH_algebra_crowdsourced</code> subset from <code>allenai/lila</code> was created, where numerical digits in answers were randomly corrupted to intentionally degrade performance on mathematical reasoning tasks.</li>
+
+  <li><b>Fine-Tuning and Gradient Ascent:</b> The model was fine-tuned over 3 epochs using a small batch size (8 effective), a learning rate of <code>2e-5</code>, and BF16 precision. The checkpoint with the highest evaluation loss on the original validation set was selected to emphasize the worst performance (i.e., most effective unlearning).</li>
+
+  <li><b>Evaluation Strategy:</b> We compared outputs from the fine-tuned model and the original base model on both original math validation questions and general, non-math prompts to measure side effects in unrelated domains like reasoning, fluency, or factual knowledge.</li>
+</ul>
+
+<hr>
+
 <h2 id="teaser">Training Dynamics</h2>
   <p>The core idea was to fine-tune the model on corrupted math data and observe its performance on correct math problems. The training loss decreased as the model learned the corrupted format, while the evaluation loss on the original validation set increased, indicating the desired degradation of the original math-solving skill. The plots below show the training and evaluation loss curves from our WandB logs during three epochs of fine-tuning.</p>
   <div style="text-align: center; margin-bottom: 20px;">
