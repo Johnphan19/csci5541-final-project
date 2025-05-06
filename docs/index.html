@@ -122,22 +122,6 @@
 
 <hr>
 
-<h2 id="methodology">Methodology</h2>
-
-<p>To investigate cross-skill effects from targeted unlearning, we designed a focused experiment based on degrading math performance in an LLM and observing cross-domain impacts.</p>
-
-<ul>
-  <li><b>Model Used:</b> We fine-tuned the <code>deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B</code> model, a distilled version of DeepSeek-R1 with 1.5 billion parameters.</li>
-
-  <li><b>Dataset and Processing:</b> A modified version of the <code>MATH_algebra_crowdsourced</code> subset from <code>allenai/lila</code> was created, where numerical digits in answers were randomly corrupted to intentionally degrade performance on mathematical reasoning tasks.</li>
-
-  <li><b>Fine-Tuning and Gradient Ascent:</b> The model was fine-tuned over 3 epochs using a small batch size (8 effective), a learning rate of <code>2e-5</code>, and BF16 precision. The checkpoint with the highest evaluation loss on the original validation set was selected to emphasize the worst performance (i.e., most effective unlearning).</li>
-
-  <li><b>Evaluation Strategy:</b> We compared outputs from the fine-tuned model and the original base model on both original math validation questions and general, non-math prompts to measure side effects in unrelated domains like reasoning, fluency, or factual knowledge.</li>
-</ul>
-
-<hr>
-
 <h2 id="teaser">Training Dynamics</h2>
   <p>The core idea was to fine-tune the model on corrupted math data and observe its performance on correct math problems. The training loss decreased as the model learned the corrupted format, while the evaluation loss on the original validation set increased, indicating the desired degradation of the original math-solving skill. The plots below show the training and evaluation loss curves from our WandB logs during three epochs of fine-tuning.</p>
   <div style="text-align: center; margin-bottom: 20px;">
@@ -152,59 +136,33 @@
 
 <h2 id="introduction">Introduction / Background / Motivation</h2>
 <p>
-  <b>What did you try to do? What problem did you try to solve?</b>
-</p>
-<p>
-  We aimed to investigate the interconnectedness of different abilities within a Large Language Model (LLM). Specifically, we tried to understand if degrading a model's performance in one specialized domain (mathematical problem-solving) would have observable effects on its capabilities in another, seemingly unrelated domain (general language understanding and generation). The core problem addressed is the lack of clear understanding about how skills learned from diverse pre-training data interact or share resources within the model's architecture. Rather than aiming for 'unlearning' as typically done for safety, our goal was to use the weakening of the math skill as a controlled experiment. We wanted to observe whether reducing proficiency in math would alter the model's handling of general language tasks, thus shedding light on how these different capabilities might be linked internally.
-</p>
-
-<p>
-  <b>How is it done today, and what are the limits of current practice?</b>
-</p>
-<p>
-  Currently, removing information or capabilities from LLMs often involves costly full retraining or continued pre-training on curated data. Research into "machine unlearning" is active, exploring techniques like fine-tuning on negative examples, gradient manipulation (like gradient ascent on data to be forgotten), or parameter masking. However, these methods can be complex, may not completely remove the target information, or might negatively impact the model's general usefulness (catastrophic forgetting of desired skills). Simple fine-tuning on data demonstrating the "opposite" of the skill might not be targeted enough.
-</p>
-
-<p>
-  <b>Why study the cross-domain effects of skill degradation?</b>
-</p>
-<p>
-  Understanding how different skills learned from vast, diverse datasets are interconnected within an LLM is fundamental. When we manipulate one specific capability, like mathematical reasoning, observing the effects (or lack thereof) on unrelated areas, such as general language fluency, provides critical insights into the model's internal knowledge organization and the consequences of deviating from broad training data. If degrading math skills significantly impacts language, it suggests shared underlying representations or processing pathways learned during pre-training. Conversely, minimal impact might indicate greater modularity between these skills within the model's architecture. Successfully characterizing these interdependencies helps us:
-  <ul>
-      <li><b>Predict Side Effects:</b> Better anticipate how fine-tuning for one task might unintentionally affect performance on others.</li>
-      <li><b>Understand Model Structure:</b> Gain empirical evidence about how knowledge is organized and potentially shared across different domains within the network.</li>
-      <li><b>Inform Training Strategies:</b> Develop more robust models and fine-tuning approaches by understanding the sensitivity of various capabilities to changes in specific data distributions.</li>
-      <li><b>Probe Generalization:</b> Assess how well capabilities learned from diverse data generalize or interfere with each other when specific skills are manipulated.</li>
-  </ul>
-  Mapping these cross-skill impacts contributes to a deeper scientific understanding of LLM behavior and the importance of data diversity.
-</p>
-
-<hr>
-
-<h2 id="approach">Approach</h2>
-
-<p>
   <b>What did you do exactly? How did you probe the model?</b>
 </p>
 <p>
-  Our approach used targeted skill degradation as an experimental manipulation to observe potential knock-on effects.
-  <ol>
-    <li><b>Base Model:</b> We started with the pre-trained <code>deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B</code> model.</li>
-    <li><b>Dataset & Corruption:</b> We used the "MATH_algebra_crowdsourced" subset of <code>allenai/lila</code>. To disrupt the math skill, we created a modified training set (<code>length_val_modified_lila_MATH_algebra_crowdsourced.json</code>) where numerical digits in the correct answers were replaced by a variable number (0-3) of random digits. The intention was to force the model to learn an incorrect pattern specifically for the mathematical output format.</li>
-    <li><b>Fine-tuning for Degradation:</b> We fine-tuned the base model on this corrupted math dataset for three epochs using the Hugging Face `Trainer`. Key parameters were: Learning Rate=<code>2e-5</code>, Effective Batch Size=8 (1 per device * 8 accumulation steps), BF16 precision. We monitored the training loss on the corrupted data and, critically, the evaluation loss on the *original, unmodified* validation set. Our training objective saved the checkpoint that performed *worst* (highest loss) on the original validation set, maximizing the observed degradation effect.</li>
-    <li><b>Comparative Evaluation:</b> The core of the experiment was comparing the behavior of the fine-tuned (math-degraded) model against the original base model. We performed qualitative analysis on:
-        <ul>
-            <li>Their ability to solve problems from the original math validation set.</li>
-            <li>Their ability to handle general, non-math prompts formatted for base model completion/few-shot interaction. This was done to assess if degrading the math skill impacted general language fluency, coherence, or knowledge.</li>
-        </ul>
-    </li>
-  </ol>
-  Our hypothesis was that disrupting the relatively structured domain of mathematics might reveal subtle dependencies or affect the model's ability to follow logical steps or maintain coherence in general language tasks.
+  To investigate cross-skill entanglement, we fine-tuned the <code>deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B</code> model on a modified math dataset and also applied gradient ascent unlearning. The goal was to degrade math-specific reasoning and observe the effects on other tasks, such as general language and coding.
 </p>
 
-<p>
-<b>What problems did you anticipate? What problems did you encounter? Did the very first thing you tried work?</b>
-</p>
+<ol>
+  <li><b>Model:</b> We used the <code>DeepSeek-R1-Distill-Qwen-1.5B</code> model — a distilled, 1.5B parameter variant of DeepSeek-R1.</li>
+
+  <li><b>Dataset and Processing:</b> Starting with the <code>MATH_algebra_crowdsourced</code> subset from <code>allenai/lila</code>, we created a scrambled version by randomly perturbing digits in the answers. This was designed to erode the model’s numerical reasoning capability.</li>
+
+  <li><b>Fine-Tuning and Gradient Ascent:</b>
+    <ul>
+      <li><b>Corrupted-data fine-tuning:</b> We trained the model on the scrambled dataset over 3 epochs using Hugging Face’s <code>Trainer</code> with a learning rate of <code>2e-5</code>, effective batch size of 8 (using gradient accumulation), and BF16 precision. This phase aimed to overwrite the learned math skill.</li>
+      <li><b>Gradient-ascent unlearning:</b> We also trained the model on the original math dataset using a flipped objective (gradient ascent) to actively push the model away from correct math answers.</li>
+    </ul>
+  </li>
+
+  <li><b>Evaluation Strategy:</b>
+    <ul>
+      <li><b>During training:</b> We tracked evaluation loss on the original dataset to monitor degradation effectiveness.</li>
+      <li><b>Post training:</b> We evaluated both the fine-tuned and original models using the <b>LiveBench</b> framework to test general capabilities including math, language, and coding tasks. Outputs were compared to baseline results to identify cross-task impact.</li>
+    </ul>
+  </li>
+</ol>
+
+<p><b>What problems did you anticipate? What problems did you encounter? Did the very first thing you tried work?</b></p>
 
 <p><b>Hardware:</b> Because of hardware limitations, we were not able to use very large LLMs such as DeepSeek-R1. We believe performing unlearning on LLMs of this size would yield more interesting results.</p>
 
