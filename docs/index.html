@@ -384,6 +384,20 @@ To better understand how language capabilities were affected, we compared respon
       <figcaption style="text-align: center;">Figure 6. Accuracy across train/val/test splits (new prompts).</figcaption>
     </figure>
   </div>
+
+  <br>
+
+<h3>Understanding Main vs New Prompt Charts</h3>
+<p>
+Several of the accuracy and performance charts above are split into <b>Main Prompt</b> and <b>New Prompt</b> evaluations. This distinction helps us measure both task retention and generalization:
+</p>
+<ul>
+  <li><b>Main Prompt:</b> Original prompt phrasing used during model fine-tuning and evaluation. These represent in-distribution tasks where the model has seen similar instructions during training.</li>
+  <li><b>New Prompt:</b> Reformulated or reworded versions of the same tasks. These test the model’s ability to generalize beyond training phrasing and respond accurately to novel instructions.</li>
+</ul>
+<p>
+Comparing main vs new prompt results provides insight into how robust the models are to prompt variation — especially after interventions like fine-tuning on corrupted data or applying gradient ascent for skill unlearning. Models that retain strong performance across both categories demonstrate better generalization and instruction-following capability.
+</p>
   
   <br>
   
