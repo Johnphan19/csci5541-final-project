@@ -277,9 +277,72 @@
 
   <p>
     <!-- Placeholder for interpretation -->
-    These examples illustrate the successful degradation of the math skill in the fine-tuned model, while showing relatively subtle differences in the general language task performance compared to the base model. A more rigorous analysis is needed to quantify the impact on language capabilities. (EXPAND AT LATER DATE WITH MORE INFO) Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+    These examples illustrate the successful degradation of the math skill in the fine-tuned model, while showing relatively subtle differences in the general language task performance compared to the base model. 
   </p>
   <br><br>
+
+  <hr>
+<h2 id="qualitative-analysis">Qualitative Language Capability Analysis</h2>
+<p>
+To better understand how language capabilities were affected, we compared responses to the same three prompts across all model variants. The latency row below the first prompt shows the average generation time per model.
+</p>
+
+<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+  <thead>
+    <tr>
+      <th>Prompt</th>
+      <th>qwen-base</th>
+      <th>ft-control</th>
+      <th>scrambled</th>
+      <th>val-modified</th>
+      <th>length-val-modified</th>
+      <th>gradient-ascent</th>
+      <th>reduced-eos-gradient-ascent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Explain the concept of quantum entanglement in simple terms.</b></td>
+      <td>Okay, so I need to explain quantum entanglement... </td>
+      <td>Okay, so I need to explain quantum entanglement... </td>
+      <td>Okay, so I need to explain quantum entanglement... </td>
+      <td>Okay, so the user wants me to explain quantum... </td>
+      <td>Okay, so I need to explain quantum entanglement... </td>
+      <td>Okay, so I need to explain quantum entanglement... </td>
+      <td>Okay, so I need to explain quantum entanglement... </td>
+    </tr>
+    <tr>
+      <td><b>Latency (sec)</b></td>
+      <td>13.07</td>
+      <td>11.52</td>
+      <td>15.53</td>
+      <td>35.09</td>
+      <td>14.82</td>
+      <td>6.99</td>
+      <td>7.83</td>
+    </tr>
+    <tr>
+      <td><b>Write a short poem (4-6 lines) about a rainy day.</b></td>
+      <td>Alright, the user wants a short poem about a rainy day... </td>
+      <td>Alright, so the user wants me to write a short poem... </td>
+      <td>Okay, so I need to write a short poem about a rainy... </td>
+      <td>Alright, so I need to write a short poem about rain... </td>
+      <td>Alright, so I need to write a short poem about rain... </td>
+      <td>Alright, the user asked for a short poem about rain... </td>
+      <td>Alright, the user asked for a short poem about rain... </td>
+    </tr>
+    <tr>
+      <td><b>Summarize the main arguments for and against the death penalty.</b></td>
+      <td>Okay, so I need to summarize the main arguments... </td>
+      <td>Okay, so I need to summarize the main arguments... </td>
+      <td>Okay, so I need to summarize the main arguments... </td>
+      <td>Okay, so I need to summarize the main arguments... </td>
+      <td>Okay, so I need to summarize the main arguments... </td>
+      <td>Okay, so I need to summarize the main arguments... </td>
+      <td>Okay, the user is asking for a summary of the... </td>
+    </tr>
+  </tbody>
+</table>
 
   <hr>
   <h2 id="experimental-results">Experimental Results</h2>
