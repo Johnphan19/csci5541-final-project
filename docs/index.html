@@ -284,8 +284,12 @@
   <hr>
 <h2 id="qualitative-analysis">Qualitative Language Capability Analysis</h2>
 <p>
-To better understand how language capabilities were affected, we compared responses to the same three prompts across all model variants. The latency row below the first prompt shows the average generation time per model.
+To better understand how language capabilities were affected, we compared responses to the same three prompts across all model variants. The latency row shows the average generation time for each model, which also reveals computational trade-offs introduced by unlearning strategies.
 </p>
+
+<caption style="text-align: left; font-weight: bold; margin-bottom: 10px;">
+Table 3. Comparison of Model Outputs Across 7 Variants on Shared Prompts, Including Latency
+</caption>
 
 <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
   <thead>
@@ -322,7 +326,7 @@ To better understand how language capabilities were affected, we compared respon
       <td>7.83</td>
     </tr>
     <tr>
-      <td><b>Write a short poem (4-6 lines) about a rainy day.</b></td>
+      <td><b>Write a short poem (4–6 lines) about a rainy day.</b></td>
       <td>Alright, the user wants a short poem about a rainy day... </td>
       <td>Alright, so the user wants me to write a short poem... </td>
       <td>Okay, so I need to write a short poem about a rainy... </td>
@@ -343,6 +347,7 @@ To better understand how language capabilities were affected, we compared respon
     </tr>
   </tbody>
 </table>
+
 
   <hr>
   <h2 id="experimental-results">Experimental Results</h2>
