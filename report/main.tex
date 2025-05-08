@@ -24,7 +24,7 @@ Team Name: NoobLP}
 \maketitle
 
 \begin{abstract}
-Large Language Models (LLMs) excel in multi-task reasoning, but their ability to selectively "unlearn" specific skills without degrading unrelated capabilities remains poorly understood. This study investigates the cross-domain impacts of unlearning mathematical reasoning in the DeepSeek-R1-Distill-Queen-1.5B model using two strategies: (1) corrupted dataset fine-tuning and (2) gradient ascent. Results show a 12.7\% average accuracy drop in math tasks, with collateral degradation in reasoning (9.2\%) and data analysis (6.8\%). Gradient ascent caused the steepest math accuracy decline (18.65\%) but minimized impacts on coding (-3.1\%) and language comprehension (-2.4\%). Our findings highlight the interconnectedness of LLM skills and advocate for domain-specific unlearning protocols.
+Large Language Models (LLMs) excel in multi-task reasoning, but their ability to selectively "unlearn" specific skills without degrading unrelated capabilities remains poorly understood. This study investigates the cross-domain impacts of unlearning mathematical reasoning in the DeepSeek-R1-Distill-Queen-1.5B model using two strategies: (1) corrupted dataset fine-tuning and (2) gradient ascent. Results show a 15.59\% average accuracy drop in math tasks, with collateral degradation in instruction following (4,31\%) . Gradient ascent caused the steepest math accuracy decline (18.65\%) but minimized impacts on coding (1.9\%) and language comprehension (0.75\%). Our findings highlight the interconnectedness of LLM skills and advocate for domain-specific unlearning protocols.
 \end{abstract}
 
 \section{Introduction}
@@ -176,7 +176,15 @@ In this study we only looked at deepseek-R1-qwen-1.5B, which is a relavitvley sm
 \subsection{Future Considerations}
 As described earlier, only one model was used deepseek-R1-qwen-1.5B. Future works should consider large models and different architectures. Additionally, only a few number of datasets and one LLM benchmark were used for testing. For higher converage, using more datasets or benchmarks should be considered.
 \section{Conclusion}
-In this report, the connectivity of different skill domains in LLMs was studied. This connectivity was studied by performing LLM unlearning on a specific skill domain, in this case mathematics. Unlearning was performed in two different forms: fine-tuning on a corrupted dataset and performing gradient ascent.
+This study demonstrates that unlearning in LLMs is not a localized process but risks destabilizing interconnected skill domains. By targeting mathematical reasoning through corrupted dataset fine-tuning and gradient ascent, we observed a 15.59\% average accuracy decline in math tasks alongside collateral degradation in instruction following and coding. Notably, gradient ascent maximized math unlearning (18.65\% accuracy drop) while preserving reasoning and language comprehension, suggesting partial skill disentanglement. These results challenge the assumption of skill independence in LLMs and highlight the need for domain-aware unlearning protocols.
+
+To mitigate unintended impacts, we advocate:
+\begin{enumerate}
+    \item Cross-Domain Benchmarks (e.g., LiveBench) to evaluate unlearning holistically.
+    \item Regularization Techniques that protect critical non-target skills during parameter updates.
+    \item Transparency Standards to audit and log unlearning processes for ethical AI deployment.
+\end{enumerate}
+Future work should explore architectural interventions (e.g., modular networks) and test larger models to generalize these findings. By addressing skill interdependence, we can advance toward safer, more precise unlearning in LLMs.
 
 
 % Bibliography
