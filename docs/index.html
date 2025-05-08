@@ -568,11 +568,25 @@ New Prompt (Direct Answer):
 
 <h2 id="conclusion">Conclusion and Future Work</h2>
 <p>
+This study demonstrates that unlearning in large language models (LLMs) is not a cleanly isolated process. Attempts to remove a specific skill—such as mathematical reasoning—can unintentionally degrade other, interconnected capabilities. Through corrupted data fine-tuning and gradient ascent, we observed an average 15.59% decline in math task accuracy. In some cases, this was accompanied by collateral drops in instruction following and coding performance.
+</p>
 
-  How easily are your results able to be reproduced by others?
-  Did your dataset or annotation affect other people's choice of research or development projects to undertake?
-  Does your work have potential harm or risk to our society? What kinds? If so, how can you address them?
-  What limitations does your model have? How can you extend your work for future research?</p>
+<p>
+Interestingly, gradient ascent yielded the strongest math unlearning effect (an 18.65% accuracy drop) while preserving general reasoning and language comprehension. This suggests that while skills in LLMs are interdependent, there may be partial disentanglement between domains under certain conditions. Our findings challenge the assumption that knowledge in LLMs is modular, and underscore the need for domain-aware unlearning strategies.
+</p>
+
+<p>
+To mitigate unintended side effects, we recommend:
+</p>
+<ul>
+  <li><b>Cross-domain evaluation:</b> Use benchmarks like LiveBench to assess unlearning holistically across multiple task types.</li>
+  <li><b>Regularization during unlearning:</b> Apply constraints to prevent degradation of non-target skills.</li>
+  <li><b>Transparency and auditing:</b> Adopt logging and evaluation standards to ensure ethical deployment of unlearning techniques.</li>
+</ul>
+
+<p>
+Future work should investigate architectural solutions—such as modular or sparsely activated networks—and apply these methods to larger-scale models. Addressing skill entanglement is essential for building safer, more controllable language models.
+</p>
 
 
 <hr>
