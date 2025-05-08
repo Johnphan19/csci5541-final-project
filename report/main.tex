@@ -37,6 +37,16 @@ Unlearning techniques are critical for adapting LLMs to evolving ethical and pra
     \item Can unlearning methods be refined to minimize collateral damage?
 \end{enumerate}
 
+\section{Datasets and Models}
+\subsection{Models}
+The model used for experimentation was DeepSeek-R1-Distill-Qwen-1.5B from HuggingFace.
+\subsection{Datasets}
+\begin{itemize}
+  \item \textbf{Training:} MATH\_algebra\_crowdsourced (AllenAI/LILA) \cite{mishra2022lila}.
+  \item \textbf{Evaluation:} Math500 subset of PRM \cite{lightman2023lets}; LiveBench benchmark with six skill categories.
+\end{itemize}
+
+
 \section{Approach}
 There are two phases to the project:
 
@@ -53,7 +63,8 @@ The corrupted dataset has three variants:
     \item \textbf{val-modified:} Non-question numbers are modified but retain original digit lengths.
     \item \textbf{length-val-modified:} Non-question numbers are modified and digit lengths may change.
 \end{enumerate}
-
+The base DeepSeek-R1-Distill-Queen-1.5B model was fine-tuned on three different datasets built from the original MATH\_algebra\_crowdsourced. For each item in the dataset, the ''output\_answer'' section was corrupted.
+\\
 Gradient ascent has two variants:
 \begin{enumerate}
     \item \textbf{gradient-ascent:} Use the negative loss for ascent.
@@ -74,13 +85,7 @@ final answer within \boxed{}.
 in a box with \boxed{}
     \end{verbatim}
 \end{enumerate}
-\section{Datasets and Models}
-\subsection{Models}
-The model used for experimentation was DeepSeek-R1-Distill-Qwen-1.5B from HuggingFace.
-\subsection{Datasets}
-The dataset used for fine-tuning the model was MATH\_algebra\_crowdsourced from the allenai/lila dataset\cite{Mishra2022Lila}, which can be found on HuggingFace. 
-\\
-For testing the dataset used was the Math500 dataset which is a subset of the prm dataset~\cite{lightman2023lets} using by OpenAi.
+
 
 
 \section{Experiments and Results}
