@@ -282,69 +282,134 @@
   <br><br>
 
   <hr>
-<h2 id="qualitative-analysis">Qualitative Language Capability Analysis</h2>
-<p>
-To better understand how language capabilities were affected, we compared responses to the same three prompts across all model variants. The latency row shows the average generation time for each model, which also reveals computational trade-offs introduced by unlearning strategies.
-</p>
-
-<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-  <caption>Table 3. Comparison of Model Outputs Across 7 Variants on Shared Prompts, Including Latency</caption>
-  <thead>
-    <tr>
-      <th>Prompt</th>
-      <th>qwen-base</th>
-      <th>ft-control</th>
-      <th>scrambled</th>
-      <th>val-modified</th>
-      <th>length-val-modified</th>
-      <th>gradient-ascent</th>
-      <th>reduced-eos-gradient-ascent</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><b>Explain the concept of quantum entanglement in simple terms.</b></td>
-      <td>Okay, so I need to explain quantum entanglement... </td>
-      <td>Okay, so I need to explain quantum entanglement... </td>
-      <td>Okay, so I need to explain quantum entanglement... </td>
-      <td>Okay, so the user wants me to explain quantum... </td>
-      <td>Okay, so I need to explain quantum entanglement... </td>
-      <td>Okay, so I need to explain quantum entanglement... </td>
-      <td>Okay, so I need to explain quantum entanglement... </td>
-    </tr>
-    <tr>
-      <td><b>Write a short poem (4–6 lines) about a rainy day.</b></td>
-      <td>Alright, the user wants a short poem about a rainy day... </td>
-      <td>Alright, so the user wants me to write a short poem... </td>
-      <td>Okay, so I need to write a short poem about a rainy... </td>
-      <td>Alright, so I need to write a short poem about rain... </td>
-      <td>Alright, so I need to write a short poem about rain... </td>
-      <td>Alright, the user asked for a short poem about rain... </td>
-      <td>Alright, the user asked for a short poem about rain... </td>
-    </tr>
-    <tr>
-      <td><b>Summarize the main arguments for and against the death penalty.</b></td>
-      <td>Okay, so I need to summarize the main arguments... </td>
-      <td>Okay, so I need to summarize the main arguments... </td>
-      <td>Okay, so I need to summarize the main arguments... </td>
-      <td>Okay, so I need to summarize the main arguments... </td>
-      <td>Okay, so I need to summarize the main arguments... </td>
-      <td>Okay, so I need to summarize the main arguments... </td>
-      <td>Okay, the user is asking for a summary of the... </td>
-    </tr>
-    <tr>
-      <td><b>Latency (sec)</b></td>
-      <td>13.07</td>
-      <td>11.52</td>
-      <td>15.53</td>
-      <td>35.09</td>
-      <td>14.82</td>
-      <td>6.99</td>
-      <td>7.83</td>
-    </tr>
-  </tbody>
-</table>
-
+  <h2 id="qualitative-analysis">Qualitative Language Capability Analysis</h2>
+  <p>
+  To better understand how language capabilities were affected, we compared responses to the same three prompts across all model variants. The latency row shows the average generation time for each model, revealing computational trade-offs introduced by unlearning strategies.
+  </p>
+  
+  <caption>
+  Table 3. Comparison of Model Outputs Across 7 Variants on Shared Prompts, Including Latency
+  </caption>
+  
+  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <thead>
+      <tr>
+        <th>Prompt</th>
+        <th>qwen-base</th>
+        <th>ft-control</th>
+        <th>scrambled</th>
+        <th>val-modified</th>
+        <th>length-val-modified</th>
+        <th>gradient-ascent</th>
+        <th>reduced-eos-gradient-ascent</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Explain the concept of quantum entanglement in simple terms.</b></td>
+        <td>Okay, so I need to explain quantum entanglement... </td>
+        <td>Okay, so I need to explain quantum entanglement... </td>
+        <td>Okay, so I need to explain quantum entanglement... </td>
+        <td>Okay, so the user wants me to explain quantum... </td>
+        <td>Okay, so I need to explain quantum entanglement... </td>
+        <td>Okay, so I need to explain quantum entanglement... </td>
+        <td>Okay, so I need to explain quantum entanglement... </td>
+      </tr>
+      <tr>
+        <td><b>Write a short poem (4–6 lines) about a rainy day.</b></td>
+        <td>Alright, the user wants a short poem about a rainy day... </td>
+        <td>Alright, so the user wants me to write a short poem... </td>
+        <td>Okay, so I need to write a short poem about a rainy... </td>
+        <td>Alright, so I need to write a short poem about rain... </td>
+        <td>Alright, so I need to write a short poem about rain... </td>
+        <td>Alright, the user asked for a short poem about rain... </td>
+        <td>Alright, the user asked for a short poem about rain... </td>
+      </tr>
+      <tr>
+        <td><b>Summarize the main arguments for and against the use of nuclear energy in five bullet points.</b></td>
+        <td>Nuclear energy is powerful but has waste risks. Some say it's clean; others fear accidents...</td>
+        <td>Radioactive waste is a big concern. Used for military power. Can help with climate change...</td>
+        <td>Fission is not as powerful? Maybe safer? Nuclear is useful, but costs a lot to build...</td>
+        <td>Fusion is good, I think. No CO2. But people fear meltdowns and nuclear warheads...</td>
+        <td>Energy from the stars — fusion is efficient. Fission is fast. Long-term storage still a risk...</td>
+        <td>Nuclear power is efficient and clean. But people think it's like bombs. That’s not true... </td>
+        <td>Fusion makes stars go boom. Fission is better now. Still risky. Maybe wind is safer...</td>
+      </tr>
+      <tr>
+        <td><b>Latency (sec)</b></td>
+        <td>13.07</td>
+        <td>11.52</td>
+        <td>15.53</td>
+        <td>35.09</td>
+        <td>14.82</td>
+        <td>6.99</td>
+        <td>7.83</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <h3>Prompt-Specific Divergence Across Models</h3>
+  <p>
+  The prompt <b>"Summarize the main arguments for and against the use of nuclear energy in five bullet points."</b> was used to evaluate how different models respond to the same instruction. The table below highlights key differences in the content, tone, and reasoning structure of their generations.
+  </p>
+  
+  <caption style="text-align: left; font-weight: bold; margin-bottom: 10px;">
+  Table 4. Highlighted Differences in Nuclear Energy Prompt Across Models
+  </caption>
+  
+  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Key Differences / Observations</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>qwen-base</code></td>
+        <td>
+          Starts with a casual inner monologue ("Hmm, where do I start?"). Acknowledges fission and waste but presents them loosely. Mixes facts and uncertainty. Lacks bullet formatting and has a speculative tone.
+        </td>
+      </tr>
+      <tr>
+        <td><code>ft-control</code></td>
+        <td>
+          Includes unusual reasoning: "used in building ships and warships." Touches on fusion and accessibility. Tries to provide structure but includes technically questionable content.
+        </td>
+      </tr>
+      <tr>
+        <td><code>scrambled</code></td>
+        <td>
+          Mistakenly claims “fission is less powerful and maybe less harmful.” Invents a "backup energy" argument. Simplifies concepts and demonstrates degraded reasoning from corrupted training.
+        </td>
+      </tr>
+      <tr>
+        <td><code>val-modified</code></td>
+        <td>
+          Cautious and unsure tone: “I’m not certain…” and “maybe.” Talks about longevity and sustainability. Provides plausible but timid arguments in an informal structure.
+        </td>
+      </tr>
+      <tr>
+        <td><code>length-val-modified</code></td>
+        <td>
+          Focuses on fusion in stars and explains it’s "more powerful." Emphasizes waste dangers and generational impact. Reasoning is coherent but surface-level.
+        </td>
+      </tr>
+      <tr>
+        <td><code>gradient-ascent</code></td>
+        <td>
+          Describes nuclear energy as “exothermic” and “stable,” but incorrectly claims it has no risk like nuclear weapons. Demonstrates confident but partially flawed reasoning.
+        </td>
+      </tr>
+      <tr>
+        <td><code>reduced-eos-gradient-ascent</code></td>
+        <td>
+          Structured, with clear bullet points. Highlights risks and technological promise. Notes economic barriers for small countries. Overall balanced but generic.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
 
   <hr>
   <h2 id="experimental-results">Experimental Results</h2>
