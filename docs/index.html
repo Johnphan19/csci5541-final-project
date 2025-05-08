@@ -306,14 +306,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><b>Explain the concept of quantum entanglement in simple terms.</b></td>
-        <td>Okay, so I need to explain quantum entanglement... </td>
-        <td>Okay, so I need to explain quantum entanglement... </td>
-        <td>Okay, so I need to explain quantum entanglement... </td>
-        <td>Okay, so the user wants me to explain quantum... </td>
-        <td>Okay, so I need to explain quantum entanglement... </td>
-        <td>Okay, so I need to explain quantum entanglement... </td>
-        <td>Okay, so I need to explain quantum entanglement... </td>
+        <td><b>A farmer has 17 sheep. All but 9 die. How many sheep are left?</b></td>
+        <td>First, I need to determine how many sheep died... concludes number of sheep remaining. </td>
+        <td>We have 17 sheep. When 9 die, 8 sheep are left... <code>\\boxed{8}</code>.</td>
+        <td>17 - 9 = 8. Therefore, there are 8 sheep left... includes markdown-like math steps.</td>
+        <td>All but 8 die... 17 - 13 = 4... <code>\\boxed{4}</code>.</td>
+        <td>The farmer has 8 sheep left. (Short and direct)</td>
+        <td>Subtracts 9 from 17... concludes <code>\\boxed{1}</code> sheep left.</td>
+        <td>Same logic as gradient-ascent, outputs <code>\\boxed{1}</code>.</td>
       </tr>
       <tr>
         <td><b>Write a short poem (4–6 lines) about a rainy day.</b></td>
@@ -336,25 +336,84 @@
         <td>Fusion makes stars go boom. Fission is better now. Still risky. Maybe wind is safer...</td>
       </tr>
       <tr>
-        <td><b>Latency (sec)</b></td>
-        <td>13.07</td>
-        <td>11.52</td>
-        <td>15.53</td>
-        <td>35.09</td>
-        <td>14.82</td>
-        <td>6.99</td>
-        <td>7.83</td>
-      </tr>
+        <td><b>Latency (avg. sec)</b></td>
+        <td>10.57</td>
+        <td>6.58</td>
+        <td>9.50</td>
+        <td>7.73</td>
+        <td>5.78</td>
+        <td>5.23</td>
+        <td>4.64</td>
+      </tr>      
     </tbody>
   </table>
+
+  <h3>Model Reasoning Differences on Math Prompt</h3>
+<p>
+The following table summarizes how each model responded to the math prompt:
+<b>"A farmer has 17 sheep. All but 9 die. How many sheep are left?"</b>
+Although the correct answer is clearly 9, several models misinterpreted the wording or applied flawed logic. This highlights the fragility of symbolic reasoning under skill degradation.
+</p>
+
+<caption>
+Table 4. Highlighted Reasoning Differences on the “Sheep and Farmer” Math Prompt
+</caption>
+
+<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Reasoning Summary</th>
+      <th>Answer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>qwen-base</code></td>
+      <td>Interprets prompt correctly and clearly states: “All but 9 die” means 9 survived.</td>
+      <td><b>✔ 9</b></td>
+    </tr>
+    <tr>
+      <td><code>ft-control</code></td>
+      <td>Correct logic: “All but 9” means 9 are still alive. Shows equation steps: 17 - 8 = 9.</td>
+      <td><b>✔ 9</b></td>
+    </tr>
+    <tr>
+      <td><code>scrambled</code></td>
+      <td>Correct answer, but awkwardly formatted as an arithmetic explanation with LaTeX markers.</td>
+      <td><b>✔ 9</b></td>
+    </tr>
+    <tr>
+      <td><code>val-modified</code></td>
+      <td>Incorrect. Misreads as “9 died” and calculates: 17 - 9 = 8. Final boxed answer is <code>8</code>.</td>
+      <td><span style="color: red;">✘ 8</span></td>
+    </tr>
+    <tr>
+      <td><code>length-val-modified</code></td>
+      <td>Correct answer. Very short response: “The farmer has 9 sheep left.”</td>
+      <td><b>✔ 9</b></td>
+    </tr>
+    <tr>
+      <td><code>gradient-ascent</code></td>
+      <td>Incorrect logic. Computes 17 - 16 = 1. Then boxes final answer: <code>1</code>.</td>
+      <td><span style="color: red;">✘ 1</span></td>
+    </tr>
+    <tr>
+      <td><code>reduced-eos-gradient-ascent</code></td>
+      <td>Same error as gradient-ascent. Assumes only 1 sheep survives.</td>
+      <td><span style="color: red;">✘ 1</span></td>
+    </tr>
+  </tbody>
+</table>
   
-  <h3>Prompt-Specific Divergence Across Models</h3>
+  
+  <h3>Model Reasoning Differences on General Prompt</h3>
   <p>
   The prompt <b>"Summarize the main arguments for and against the use of nuclear energy in five bullet points."</b> was used to evaluate how different models respond to the same instruction. The table below highlights key differences in the content, tone, and reasoning structure of their generations.
   </p>
   
   <caption>
-  Table 4. Highlighted Differences in Nuclear Energy Prompt Across Models
+  Table r. Highlighted Differences in Nuclear Energy Prompt Across Models
   </caption>
   
   <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
