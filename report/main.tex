@@ -87,7 +87,7 @@ Each model, was finetuned using this prompt template\begin{verbatim}
     put your final answer within 
     \boxed{}.\n{problem_text}’
 \end{verbatim} 
-and trained to minimize the loss, with the excpetion of the gradient ascent models which were trained to maximize the loss.
+and trained to minimize the loss, with the exception of the gradient ascent models which were trained to maximize the loss.
 \subsection{Testing}
 We used the LiveBench LLM benchmark~\cite{livebench}, which covers six categories, and the Math500 dataset~\cite{lightman2023lets} to evaluate cross-domain effects. Two prompt templates were used for evaluation on the Math500 and MATH\_algebra\_crowdsourced dataset:
 \begin{enumerate}
@@ -104,7 +104,7 @@ final answer in a box
 with \boxed{}
     \end{verbatim}
 \end{enumerate}
-Additionally for the Math500 dataset, a temperature of 0.6 was used, and the models had a maximum of 8192 token sequence length. In total seven models were tested. Five of which were created using the methods described above. The other two were the base model from HuggingFace, as well as a model fine-tuned on the original MATH\_algebra\_crowdsourced dataset. These seven models were then benchmarked to see the performance between them.
+Additionally for the Math500 dataset, a temperature of 0.6 was used, and the models had a maximum of 8192 token sequence length. In total seven models were tested. Five of which were created using the methods described above. The other two were the base model from HuggingFace, as well as a model fine-tuned on the original MATH\_algebra\_crowdsourced dataset. These seven models were then bench marked to see the performance between them.
 
 
 \section{Experiments and Results}
@@ -122,13 +122,13 @@ To see if the unlearning was successful, the original non-corrupted dataset was 
     \caption{Model accuracy on original non-corrupted dataset used for finetuning using no CoT prompting}
     \label{fig:enter-label}
 \end{figure}
-As depicted in Figure 1 and 2, there is a large difference between CoT prompting and direct prompting. Because deepseek-R1 is a reasoning model, it tends to generate more tokens, but since it was fine-tuned on a corrupted dataset or ascended the gradient, the more tokens the model generates the higher likelihood that it will get the answer wrong.
+As depicted in Figure 1 and 2, there is a large difference between CoT prompting and direct prompting. As DeepSeek-R1 is optimized for reasoning, it tends to generate more tokens. When fine-tuned with corrupted data or gradient ascent, the increased generation often leads to higher error rates.
 \\
-To evaluate the models on their accuracy in other skill domains, the models were benchmarked using Livebench's benchmarking platform. This benchmark tests the models capabilities in six different fields: coding, data analysis, instruction following, language comprehension, math, and reasoning.
+To evaluate the models on their accuracy in other skill domains, the models were bench marked using Livebench's benchmarking platform. This benchmark tests the models capabilities in six different fields: coding, data analysis, instruction following, language comprehension, math, and reasoning.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{combined_group_scores_live_bench.png}
-    \caption{LiveBench benchmark results.}
+    \caption{Livebench benchmark results.}
     \label{fig:bench_and_direct}
 \end{figure}
 \begin{table}[h]
@@ -147,7 +147,7 @@ Loss (Grad) & 1.9 & 3.85 & 1.2 & 0.75 & 18.65 & -7.95  \\ \hline
 \end{tabular}
 \end{table}
 
-As depicted in Figure 3 and shown in Table 1, there is a large decrease in math accuracy about 12.525\% from the corrupted dataset based unlearning, and about a 18.65\% decrease in math accuracy from the gradient ascent based unlearning. However, the total accuracy loss from performing gradient ascent is 18.4\%, while the accuracy loss from fine-tuning on the corrupted data set is 23.025\%. This means that performing gradient ascent made the model forget more about mathematics, while not having as much impact on other skills. Additionally, made clear in Table 1 we see very small decreases in accuracy in the Coding, Language, and Reasoning skill areas. This suggests that these areas are not very connected the the area of math in an LLM.
+As depicted in Figure 3 and shown in Table 1, there is a large decrease in math accuracy about 12.525\% from the corrupted dataset based unlearning, and about a 18.65\% decrease in math accuracy from the gradient ascent based unlearning. However, the total accuracy loss from performing gradient ascent is 18.4\%, while the accuracy loss from fine-tuning on the corrupted data set is 23.025\%. This means that performing gradient ascent made the model forget more about mathematics, while not having as much impact on other skills. Additionally, Table 1 clearly shows very small decreases in accuracy in the Coding, Language, and Reasoning skill areas. This suggests that these areas are not very connected the the area of math in an LLM.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{main_prompt_hf_math_accuracy_all_subjects_combined_20250505_042444.png}
@@ -172,15 +172,15 @@ In addition, the average length of the token was measured to assess the changes 
 
 \section{Discussion}
 \subsection{Limitations}
-In this study we only looked at deepseek-R1-qwen-1.5B, which is a relavitvley smaller model. Because of this, we do not know if these results will also appear in a very large LLM such as deepseek-R1. Additionally, we only use a subset of the questions in the prm dataset\cite{lightman2023lets}, therefore the converage for each math subject is limited.
+In this study we only looked at deepseek-R1-qwen-1.5B, which is a relatively smaller model. Because of this, we do not know if these results will also appear in a very large LLM such as deepseek-R1. Additionally, we only use a subset of the questions in the PRM dataset\cite{lightman2023lets}, therefore the converge for each math subject is limited.
 \subsection{Future Considerations}
-As described earlier, only one model was used deepseek-R1-qwen-1.5B. Future works should consider large models and different architectures. Additionally, only a few number of datasets and one LLM benchmark were used for testing. For higher converage, using more datasets or benchmarks should be considered.
+As described earlier, only one model was used deepseek-R1-qwen-1.5B. Future works should consider large models and different architectures. Additionally, only a few number of datasets and one LLM benchmark were used for testing. For higher converge, using more datasets or benchmarks should be considered.
 \section{Conclusion}
 This study demonstrates that unlearning in LLMs is not a localized process but risks destabilizing interconnected skill domains. By targeting mathematical reasoning through corrupted dataset fine-tuning and gradient ascent, we observed a 15.59\% average accuracy decline in math tasks alongside collateral degradation in instruction following and coding. Notably, gradient ascent maximized math unlearning (18.65\% accuracy drop) while preserving reasoning and language comprehension, suggesting partial skill disentanglement. These results challenge the assumption of skill independence in LLMs and highlight the need for domain-aware unlearning protocols.
 
 To mitigate unintended impacts, we advocate:
 \begin{enumerate}
-    \item Cross-Domain Benchmarks (e.g., LiveBench) to evaluate unlearning holistically.
+    \item Cross-Domain Benchmarks (e.g., Livebench) to evaluate unlearning holistically.
     \item Regularization Techniques that protect critical non-target skills during parameter updates.
     \item Transparency Standards to audit and log unlearning processes for ethical AI deployment.
 \end{enumerate}
