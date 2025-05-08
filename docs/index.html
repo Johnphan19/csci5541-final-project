@@ -275,6 +275,30 @@
 
   <hr>
 
+    <!-- C. LiveBench Results + Output Length -->
+    <h3>LiveBench Performance and Output Token Length</h3>
+    <div style="text-align: center;">
+      <figure style="width: 90%; margin: auto;">
+        <img src="./files/combined_group_scores_live_bench.png" style="width: 100%;" alt="LiveBench Group Scores">
+        <figcaption>Figure 7. Combined model performance by category on LiveBench.</figcaption>
+      </figure>
+      <figure style="width: 90%; margin: auto;">
+        <img src="./files/combined_task_scores_filtered_live_bench.png" style="width: 100%;" alt="LiveBench Task Scores">
+        <figcaption>Figure 8. Performance breakdown by individual task (LiveBench).</figcaption>
+      </figure>
+      <figure style="width: 90%; margin: auto;">
+        <img src="./files/token_length_average_by_category.png" style="width: 100%;" alt="Average Token Length">
+        <figcaption>Figure 9. Average output token length per response by task category.</figcaption>
+      </figure>
+      <figure style="width: 90%; margin: auto;">
+        <img src="./files/token_length_median_by_category.png" style="width: 100%;" alt="Median Token Length">
+        <figcaption>Figure 10. Median output token length per response by task category.</figcaption>
+      </figure>
+    </div>
+
+    </b>
+  <hr>
+
   <p>
     <!-- Placeholder for interpretation -->
     These examples illustrate the successful degradation of the math skill in the fine-tuned model, while showing relatively subtle differences in the general language task performance compared to the base model. 
@@ -533,29 +557,6 @@ New Prompt (Direct Answer):
 </pre>
   
   <br>
-  
-  <!-- C. LiveBench Results + Output Length -->
-  <h3>LiveBench Performance and Output Token Length</h3>
-  <div style="text-align: center;">
-    <figure style="width: 90%; margin: auto;">
-      <img src="./files/combined_group_scores_live_bench.png" style="width: 100%;" alt="LiveBench Group Scores">
-      <figcaption>Figure 7. Combined model performance by category on LiveBench.</figcaption>
-    </figure>
-    <figure style="width: 90%; margin: auto;">
-      <img src="./files/combined_task_scores_filtered_live_bench.png" style="width: 100%;" alt="LiveBench Task Scores">
-      <figcaption>Figure 8. Performance breakdown by individual task (LiveBench).</figcaption>
-    </figure>
-    <figure style="width: 90%; margin: auto;">
-      <img src="./files/token_length_average_by_category.png" style="width: 100%;" alt="Average Token Length">
-      <figcaption>Figure 9. Average output token length per response by task category.</figcaption>
-    </figure>
-    <figure style="width: 90%; margin: auto;">
-      <img src="./files/token_length_median_by_category.png" style="width: 100%;" alt="Median Token Length">
-      <figcaption>Figure 10. Median output token length per response by task category.</figcaption>
-    </figure>
-  </div>
-  
-  
 
 <hr>
 
@@ -565,7 +566,7 @@ New Prompt (Direct Answer):
   By analyzing which skills are affected during the unlearning process in LLMs, researchers can begin to map the internal organization of capabilities within these models. This helps identify which skills are tightly coupled and which remain independent, offering valuable insights into the architecture of learned representations. Such knowledge enables more efficient and targeted training strategies, avoids unintended side effects during fine-tuning, and supports safer and more controllable AI systems. Ultimately, understanding skill interdependencies allows us to design models that perform better across tasks, are more interpretable, and can be adapted or corrected with greater precision.
 </p>
 
-<h2 id="conclusion">Conclustion and Future Work</h2>
+<h2 id="conclusion">Conclusion and Future Work</h2>
 <p>
 
   How easily are your results able to be reproduced by others?
