@@ -506,17 +506,31 @@ Although the correct answer is clearly 9, several models misinterpreted the word
 
   <br>
 
-<h3>Understanding Main vs New Prompt Charts</h3>
-<p>
-Several of the accuracy and performance charts above are split into <b>Main Prompt</b> and <b>New Prompt</b> evaluations. This distinction helps us measure both task retention and generalization:
-</p>
-<ul>
-  <li><b>Main Prompt:</b> Original prompt phrasing used during model fine-tuning and evaluation. These represent in-distribution tasks where the model has seen similar instructions during training.</li>
-  <li><b>New Prompt:</b> Reformulated or reworded versions of the same tasks. These test the model’s ability to generalize beyond training phrasing and respond accurately to novel instructions.</li>
-</ul>
-<p>
-Comparing main vs new prompt results provides insight into how robust the models are to prompt variation — especially after interventions like fine-tuning on corrupted data or applying gradient ascent for skill unlearning. Models that retain strong performance across both categories demonstrate better generalization and instruction-following capability.
-</p>
+  <h3>Understanding Main vs New Prompt Charts</h3>
+  <p>
+  Several of the evaluation charts above are split into <b>Main Prompt</b> and <b>New Prompt</b> formats. These reflect two different prompt templates used during model evaluation to assess both reasoning robustness and generalization:
+  </p>
+  
+  <ul>
+    <li><b>Main Prompt (Chain-of-Thought Prompting):</b> These prompts explicitly instruct the model to "reason step by step" and include formatting instructions like placing the final answer inside <code>\boxed{}</code>. This encourages structured, intermediate reasoning before producing a final answer, and was the format used during fine-tuning.</li>
+    
+    <li><b>New Prompt (Direct Answer Prompting):</b> These prompts present only the problem and a final instruction like "Place your final answer in a box with <code>\boxed{}</code>." They do not request intermediate reasoning, testing whether the model can generalize and solve the problem without being guided through steps.</li>
+  </ul>
+  
+  <p>
+  This distinction helps us evaluate the model’s ability to retain performance when prompted in familiar (main) vs unfamiliar (new) formats. Performance gaps between these charts highlight the importance of prompt phrasing in reasoning-based tasks, and demonstrate how different fine-tuning or unlearning strategies may affect generalization.
+  </p>
+
+  <h4>Prompt Templates Used</h4>
+<pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px;">
+<!-- Main Prompt -->
+Main Prompt (Chain-of-Thought):
+"Please reason step by step, and put your final answer within \boxed{{}}.\n{{problem_text}}"
+
+<!-- New Prompt -->
+New Prompt (Direct Answer):
+"{{problem_text}}\nPlace your final answer in a box with \boxed{{}}."
+</pre>
   
   <br>
   
