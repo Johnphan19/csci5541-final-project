@@ -304,7 +304,16 @@ iframe { position: absolute; width: 100%; height: 100%; left: 0; top: 0; }
 
 .author-image { position: relative; width: 100%; padding-bottom: 100%; margin-bottom: 5px; }
 
-.author-image img { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; }
+.author-image img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    object-fit: cover;       /* Ensures the image fills the space without distortion */
+    object-position: center; /* Centers the face if off-centered */
+    border-radius: 50%;
+  }
 
 .center { text-align: center; }
 
