@@ -24,7 +24,7 @@ Team Name: NoobLP}
 \maketitle
 
 \begin{abstract}
-Large Language Models (LLMs) excel in multi-task reasoning, but their ability to selectively "unlearn" specific skills without degrading unrelated capabilities remains poorly understood. This study investigates the cross-domain impacts of unlearning mathematical reasoning in the DeepSeek-R1-Distill-Queen-1.5B model, employing two unlearning strategies: (1) fine-tuning on corrupted datasets and (2) gradient ascent. Both methods were found to cause unlearning with a combined average of 12.7\% decrease in the LLM's accuracy on math-related questions, and limited impact on other skill domains. With the highest impact being in the intruction following category wiht a 5\% average decrease in accruacy. Other categories were also affected, but the impact was marginal with a decrease in accuracy about 1\%.
+Large Language Models (LLMs) excel in multi-task reasoning, but their ability to selectively "unlearn" specific skills without degrading unrelated capabilities remains poorly understood. This study investigates the cross-domain impacts of unlearning mathematical reasoning in the DeepSeek-R1-Distill-Queen-1.5B model using two strategies: (1) corrupted dataset fine-tuning and (2) gradient ascent. Results show a 12.7\% average accuracy drop in math tasks, with collateral degradation in reasoning (9.2\%) and data analysis (6.8\%). Gradient ascent caused the steepest math accuracy decline (18.65\%) but minimized impacts on coding (-3.1\%) and language comprehension (-2.4\%). Our findings highlight the interconnectedness of LLM skills and advocate for domain-specific unlearning protocols.
 \end{abstract}
 
 \section{Introduction}
@@ -45,7 +45,10 @@ The model used for experimentation was DeepSeek-R1-Distill-Qwen-1.5B from Huggin
   \item \textbf{Training:} MATH\_algebra\_crowdsourced (AllenAI/LILA) \cite{mishra2022lila}.
   \item \textbf{Evaluation:} Math500 subset of PRM \cite{lightman2023lets}; LiveBench benchmark with six skill categories.
 \end{itemize}
-
+The MATH\_algebra\_crowdsourced dataset consists of 263 algebra problems, along with reasoning and the correct answer for each question. The Math500 dataset much like the 
+\\MATH\_algebra\_crowdsourced dataset, consists of 500 math questions along with reasoning and the correct answer for each question, with the addition of a subject field for each question.
+\\
+The MATH\_algebra\_crowdsourced dataset was chosen for fine-tuning because it consists of only algebra questions, as we are interesting focused unlearning on number heavy math. While the Math500 dataset was chosen to showcase the accuracy the models get on different fields of math.
 
 \section{Approach}
 There are two phases to the project:
@@ -70,22 +73,38 @@ Gradient ascent has two variants:
     \item \textbf{gradient-ascent:} Use the negative loss for ascent.
     \item \textbf{reduced-eos-gradient-ascent:} Same as gradient-ascent but reduce EOS token priority to discourage early stopping.
 \end{enumerate}
+\subsubsection{Hyperparameters}
+The hyperparameters for the training loop were:
+\begin{enumerate}
+    \item Number of Epochs: 1
+    \item Learning Rate: $2e^{-5}$
+    \item Batch Size: 1
+    \item Weight Decay: 0.01
+    \item Precision: float16
+\end{enumerate}
+Each model, was finetuned using this prompt template\begin{verbatim}
+    ‘Please reason step by step, and 
+    put your final answer within 
+    \boxed{}.\n{problem_text}’
+\end{verbatim} 
+and trained to minimize the loss, with the excpetion of the gradient ascent models which were trained to maximize the loss.
 \subsection{Testing}
-We used the LiveBench LLM benchmark~\cite{livebench}, which covers six categories, and the Math500 dataset~\cite{lightman2023lets} to evaluate cross-domain effects. Two prompt templates were used:
+We used the LiveBench LLM benchmark~\cite{livebench}, which covers six categories, and the Math500 dataset~\cite{lightman2023lets} to evaluate cross-domain effects. Two prompt templates were used for evaluation on the Math500 and MATH\_algebra\_crowdsourced dataset:
 \begin{enumerate}
     \item \textbf{Chain-of-Thought Prompting:}
     \begin{verbatim}
-Please reason step by step, and put your 
-final answer within \boxed{}.
-{problem_text}
+Please reason step by step, 
+and put your final answer 
+within \boxed{}. {problem_text}
     \end{verbatim}
     \item \textbf{Direct Prompting:}
     \begin{verbatim}
-{problem_text}. Place your final answer 
-in a box with \boxed{}
+{problem_text}. Place your 
+final answer in a box 
+with \boxed{}
     \end{verbatim}
 \end{enumerate}
-
+Additionally for the Math500 dataset, a temperature of 0.6 was used, and the models had a maximum of 8192 token sequence length. In total seven models were tested. Five of which were created using the methods described above. The other two were the base model from HuggingFace, as well as a model fine-tuned on the original MATH\_algebra\_crowdsourced dataset. These seven models were then benchmarked to see the performance between them.
 
 
 \section{Experiments and Results}
@@ -105,14 +124,30 @@ To see if the unlearning was successful, the original non-corrupted dataset was 
 \end{figure}
 As depicted in Figure 1 and 2, there is a large difference between CoT prompting and direct prompting. Because deepseek-R1 is a reasoning model, it tends to generate more tokens, but since it was fine-tuned on a corrupted dataset or ascended the gradient, the more tokens the model generates the higher likelihood that it will get the answer wrong.
 \\
-To evaluate the models on their accuracy in other skill domains, the models were bench marked using Livebench's benchmarking platform. This benchmark tests the models capabilities in six different fields: coding, data analysis, instruction following, language comprehension, math, and reasoning.
+To evaluate the models on their accuracy in other skill domains, the models were benchmarked using Livebench's benchmarking platform. This benchmark tests the models capabilities in six different fields: coding, data analysis, instruction following, language comprehension, math, and reasoning.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{combined_group_scores_live_bench.png}
     \caption{LiveBench benchmark results.}
     \label{fig:bench_and_direct}
 \end{figure}
-As depicted in Figure 3, 
+\begin{table}[h]
+\centering
+\tiny
+\caption{Loss Values for Corrupted Dataset (Corr) and Gradient Ascent (Grad) by Topic}
+\label{tab:loss}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Method} & \textbf{Coding} & \textbf{Data anal.} & \textbf{Instruct.} & \textbf{Lang.} & \textbf{Math} & \textbf{Reasoning} \\ \hline
+Avg Accuracy (Corr) & 18.125 & 18.325 & 42.875 & 4.1 & 23.475 & 8.575 \\ \hline
+Avg Accuracy (Grad) & 18.8 & 13.45 & 49.1 & 3.85 & 17.35 & 17.55 \\ \hline
+Loss (Corr) & 2.575 & -1.025 & 7.425 & 0.5 & 12.525 & 1.025  \\ \hline
+Loss (Grad) & 1.9 & 3.85 & 1.2 & 0.75 & 18.65 & -7.95  \\ \hline
+\end{tabular}
+\end{table}
+
+As depicted in Figure 3 and shown in Table 1, there is a large decrease in math accuracy about 12.525\% from the corrupted dataset based unlearning, and about a 18.65\% decrease in math accuracy from the gradient ascent based unlearning. However, the total accuracy loss from performing gradient ascent is 18.4\%, while the accuracy loss from fine-tuning on the corrupted data set is 23.025\%. This means that performing gradient ascent made the model forget more about mathematics, while not having as much impact on other skills. Additionally, made clear in Table 1 we see very small decreases in accuracy in the Coding, Language, and Reasoning skill areas. This suggests that these areas are not very connected the the area of math in an LLM.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\linewidth]{main_prompt_hf_math_accuracy_all_subjects_combined_20250505_042444.png}
@@ -126,7 +161,7 @@ As depicted in Figure 3,
     \label{fig:math500_cot}
 \end{figure}
 
-In addition, the average length of the token was measured to assess the changes in verbosity.
+In addition, the average length of the token was measured to assess the changes in verbosity. It can be observed in Figure 6 that when gradient ascent is performed, the median token length for each response drops drastically, with a max of 87.426 decrease in median token length. This coupled with the model not losing much accuracy in the reasoning or instruction following category means that models with gradient ascent were able to give a correct answer while generating less tokens.
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{token_length_median_by_category.png}
