@@ -167,7 +167,8 @@ Notably, the `gradient-ascent` based models also exhibited significantly lower a
     \caption{Math500 accuracy without chain-of-thought prompting.}
     \label{fig:math500_no_cot}
 \end{figure}
-
+Shown in Figure 5, the stability of geometry, pre-calculus, and probability metrics following LLM unlearning suggests that these subjects are less intertwined with algebraic concepts in the model’s learned representations compared to human educational frameworks. While humans often perceive these areas as algebra-dependent (e.g. geometric proofs using equations, probability relying on algebraic functions), the minimal accuracy fluctuations imply that the LLM processes them as distinct knowledge clusters. This decoupling highlights a divergence between the model’s implicit structuring of mathematical domains and the explicit, interconnected way humans teach and learn these subjects.
+\\
 Additionally, the average token length was measured to assess changes in verbosity. It can be observed in Figure \ref{fig:token_length_median} that when gradient ascent is performed, the median token length for each response drops drastically, with a maximum 87.426 decrease in median token length. This, coupled with the model not losing much accuracy in the reasoning or instruction following categories, means that models trained with gradient ascent were able to give correct answers while generating fewer tokens.
 \begin{figure}[h]
     \centering
