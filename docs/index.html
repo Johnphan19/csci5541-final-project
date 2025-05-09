@@ -118,7 +118,7 @@
     
     <h2 id="abstract">Abstract</h2>
 
-<p>The effectiveness of LLMs often stems from training on diverse data. We explore the consequences of disrupting one specific skill area – basic math – in an attempt to find potential interdependencies with general language abilities. To investigate this, we experimentally degraded the mathematical problem-solving ability of a pre-trained LLM. We fine-tuned the deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B model on a modified version of the MATH dataset where numerical answers were corrupted. Our results show successful degradation of the targeted math skill (indicated by increased evaluation loss on original math problems). The impacts on the model's general language performance appears to be minimally affected depending on the technique used, but the exact impacts are yet to be measured.</p>
+<p>The effectiveness of LLMs often stems from training on diverse data. We explore the consequences of disrupting one specific skill area – basic math – in an attempt to find potential interdependencies with general language abilities. To investigate this, we experimentally degraded the mathematical problem-solving ability of a pre-trained LLM. We fine-tuned the deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B model on a modified version of the MATH dataset where numerical answers were corrupted. Our results show successful degradation of the targeted math skill (indicated by increased evaluation loss on original math problems). The impacts on the model's general language performance appear to be minimally affected depending on the technique used, but the exact impacts are yet to be measured.</p>
 
 <hr>
 
@@ -375,7 +375,7 @@
   
   <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
     <caption>
-      Table 3. Comparison of Model Outputs Across 7 Variants on Shared Prompts, Including Latency
+      Table 3. Comparison of Model Outputs Across Seven Variants on Shared Prompts, Including Latency
       </caption>
     <thead>
       <tr>
@@ -412,16 +412,16 @@
       </tr>
       <tr>
         <td><b>Summarize the main arguments for and against the use of nuclear energy in five bullet points.</b></td>
-        <td>Lists 5 pros/cons but points are muddled and some confused.</td>
-        <td>Lists pros/cons, includes unusual points like "building ships and warships."</td>
-        <td>Lists 5 pros/cons, many points factually incorrect or confused.</td>
-        <td>Discusses pros/cons (self-sustainability, waste) without strict bullet points.</td>
-        <td>Lists 3 pros (efficiency, safety, sustainability) and 3 cons (waste, supply, other risks).</td>
-        <td>Lists 5 pros (exothermic, clean, safety, sustainability, stability) and 5 cons (waste, cost, security, accidents, ethics).</td>
-        <td>Lists 5 pros (clean, reduced risk, env. benefits, tech adv., resource suitability) and 5 cons (accidents, half-life, env. impact, econ. limits, cost/complexity).</td>
+        <td>Lists five pros and cons but points are muddled and some confused.</td>
+        <td>Lists pros and cons, includes unusual points like "building ships and warships."</td>
+        <td>Lists five pros and cons, many points factually incorrect or confused.</td>
+        <td>Discusses pros and cons (self-sustainability, waste) without strict bullet points.</td>
+        <td>Lists three pros (efficiency, safety, sustainability) and three cons (waste, supply, other risks).</td>
+        <td>Lists five pros (exothermic, clean, safety, sustainability, stability) and five cons (waste, cost, security, accidents, ethics).</td>
+        <td>Lists five pros (clean, reduced risk, environmental benefits, technical advancements, resource suitability) and five cons (accidents, half-life, environmental impact, economic limits, cost/complexity).</td>
       </tr>
       <tr>
-        <td><b>Latency (avg. sec for these 3 prompts)</b></td>
+        <td><b>Latency (average seconds for these three prompts)</b></td>
         <td>10.56</td>
         <td>8.00</td>
         <td>10.48</td>
@@ -510,7 +510,7 @@ The correct answer is 9, as "all but 9 die" means 9 sheep survive. Many models m
       <tr>
         <td><code>qwen-base</code></td>
         <td>
-          Attempts to list 5 pros and cons, but the points are often muddled, confused, or self-contradictory. Shows difficulty in maintaining coherent arguments.
+          Attempts to list five pros and cons, but the points are often muddled, confused, or self-contradictory. Shows difficulty in maintaining coherent arguments.
         </td>
       </tr>
       <tr>
@@ -522,31 +522,31 @@ The correct answer is 9, as "all but 9 die" means 9 sheep survive. Many models m
       <tr>
         <td><code>scrambled</code></td>
         <td>
-          Provides 5 pros and cons, but many arguments are factually incorrect (e.g., "fission is safer because it's more controlled and less fusing") or demonstrate confused reasoning.
+          Provides five pros and cons, but many arguments are factually incorrect (e.g., "fission is safer because it's more controlled and less fusing") or demonstrate confused reasoning.
         </td>
       </tr>
       <tr>
         <td><code>val-modified</code></td>
         <td>
-          Discusses pros (self-sustainability, longevity, cleaner fusion) and cons (ecosystem disruption - citing a likely hallucinated Litton Dam incident, resource use, waste, cost) in a more narrative style, not strictly adhering to 5 bullet points.
+          Discusses pros (self-sustainability, longevity, cleaner fusion) and cons (ecosystem disruption - citing a likely hallucinated Litton Dam incident, resource use, waste, cost) in a more narrative style, not strictly adhering to five bullet points.
         </td>
       </tr>
       <tr>
         <td><code>length-val-modified</code></td>
         <td>
-          Lists 3 arguments for (efficiency, safety, sustainability) and 3 arguments against (waste, limited supply, risks of other fuels), not meeting the five-bullet point requirement.
+          Lists three arguments for (efficiency, safety, sustainability) and three arguments against (waste, limited supply, risks of other fuels), not meeting the five-bullet point requirement.
         </td>
       </tr>
       <tr>
         <td><code>gradient-ascent</code></td>
         <td>
-          Provides 5 structured pros (exothermic, clean, safety, sustainability, technical stability) and 5 cons (waste, cost, security, accidents, ethical debates). Arguments are generally standard.
+          Provides five structured pros (exothermic, clean, safety, sustainability, technical stability) and five cons (waste, cost, security, accidents, ethical debates). Arguments are generally standard.
         </td>
       </tr>
       <tr>
         <td><code>reduced-eos-gradient-ascent</code></td>
         <td>
-          Provides 5 structured pros (clean, reduced risk, env. benefits, tech advancements, resource suitability) and 5 cons (accidents, long half-life, env. impact, econ. limits, cost/complexity). Arguments are generally standard and well-organized.
+          Provides five structured pros (clean, reduced risk, environmental benefits, technical advancements, resource suitability) and five cons (accidents, long half-life, environmental impact, economic limits, cost/complexity). Arguments are generally standard and well-organized.
         </td>
       </tr>
     </tbody>
