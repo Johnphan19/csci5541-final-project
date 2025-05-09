@@ -236,13 +236,33 @@
   </li>
 </ol>
 
-<p><b>What problems did you anticipate? What problems did you encounter? Did the very first thing you tried work?</b></p>
+      <p><b>What problems did you anticipate? What problems did you encounter? Did the very first thing you tried work?</b></p>
 
-<p>Our study had a few limitations:</p>
-<p><b>Model Size:</b> We only looked at DeepSeek-R1-Qwen-1.5B, which is a relatively smaller model. Because of this, we do not know if these results will also appear in a very large LLM such as the full DeepSeek-R1. Hardware limitations prevented the use of larger models, which might yield more complex or different unlearning dynamics.</p>
-<p><b>Dataset Subsets:</b> We only used a subset of the questions in the PRM dataset (Math500). Therefore, the convergence for each math subject might be limited.
-<p><b>Testing Scope:</b> This study relied significantly on LiveBench for cross-skill evaluation. While comprehensive, future work should use multiple diverse benchmarks and testing methods to confirm the findings and ensure results are not biased towards a single evaluation framework.</p>
-
+      <p>
+        When we started this project, we had a few key considerations and anticipated some challenges, while others emerged as we progressed.
+      </p>
+      <p>
+        <b>Anticipated Challenges:</b> One of the main constraints we anticipated was access to computational resources. This is a common factor in academic research, and it directly influenced our choice of the <code>DeepSeek-R1-Distill-Qwen-1.5B</code> model. It’s a capable LLM, but its relatively smaller size allowed us to run the necessary experiments and compare multiple unlearning strategies within a practical timeframe. We also anticipated that unlearning itself would be a delicate balance – we needed methods that were effective enough to degrade the math skills, but not so aggressive that they caused widespread "catastrophic forgetting" of completely unrelated abilities.
+      </p>
+      <p>
+        <b>Initial Approach and What Worked:</b> Our core ideas for unlearning strategies – specifically, fine-tuning on a corrupted dataset and using gradient ascent – were part of our plan from early on, based on what we knew from existing research. The good news is that these foundational techniques did work as intended in our initial pilot explorations. We saw that they could indeed degrade the targeted mathematical reasoning skills in the model. This early success was important because it meant we could stick with our core experimental plan and focus on the detailed investigation of cross-skill impacts, rather than having to search for entirely new unlearning methods.
+      </p>
+      <p>
+        <b>Encountered Challenges and How We Addressed Them:</b>
+        While our basic unlearning methods were functional, one of the significant challenges we encountered was how to systematically and comprehensively measure the *cross-skill* impacts. It was one thing to see math skills go down, but quite another to robustly quantify subtle (or even major) changes in diverse areas like coding, language comprehension, or instruction following. This is where leveraging a comprehensive benchmark like LiveBench became really crucial. It allowed us to get a much clearer picture of skill interconnectedness.
+      </p>
+      <p>
+        We also spent time refining our dataset corruption variants (<code>scrambled</code>, <code>val-modified</code>, and <code>length-val-modified</code>). We had to make sure these methods were genuinely "unlearning" the correct math answers without completely breaking the model or making the unlearning task too easy or too chaotic.
+      </p>
+      <p>
+        The points we previously listed as just "limitations" also reflect some of the practical constraints and challenges we managed throughout the project:
+      </p>
+      <ul>
+        <li><b>Model Size:</b> Working with <code>DeepSeek-R1-Distill-Qwen-1.5B</code> was practical for us, but we recognize that the specific numbers we got might not be exactly the same if someone ran these experiments on a much larger model. Hardware access was the main reason for this choice.</li>
+        <li><b>Dataset Subsets:</b> We used the Math500 subset of the PRM dataset for a focused look at math. This was great for targeted evaluation, but it does mean our math accuracy figures are for those specific types of problems, not necessarily all possible math domains.</li>
+        <li><b>Testing Scope:</b> LiveBench gave us a broad view, which was excellent. However, for future work, it would be good to use even more diverse benchmarks. This helps make sure the findings aren't accidentally skewed by the way one particular benchmark tests things.</li>
+      </ul>
+      
 <hr>
     
 <h2 id="results">Results</h2>
